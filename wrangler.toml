@@ -1,0 +1,26 @@
+# Cloudflare Workers config for Fox Davidson Property Mortgage MCP
+#
+# Deployment URL:
+#   https://fd-property-mortgage-mcp.<cf-subdomain>.workers.dev/mcp
+#   (free, automatic, works immediately on first deploy)
+#
+# Reuses the existing fdcommercial-uk workers.dev subdomain (same
+# Cloudflare account as the FDC MCP). A custom domain on foxdavidson.co.uk
+# is possible later since foxdavidson.co.uk DNS is already on Cloudflare —
+# uncomment the [[routes]] block and redeploy.
+
+name = "fd-property-mortgage-mcp"
+main = "src/worker.ts"
+compatibility_date = "2026-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# UNCOMMENT to serve on a custom subdomain of foxdavidson.co.uk
+# (DNS is already on Cloudflare). Wrangler creates the DNS record
+# automatically on next deploy.
+#
+# [[routes]]
+# pattern = "mcp.foxdavidson.co.uk"
+# custom_domain = true

@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output is committed to npm but not git
+dist/
+
+# Local Claude Desktop config (contains absolute paths specific to one machine)
+claude_desktop_config.json
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Optional cache
+.npm
+.cache/

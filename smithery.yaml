@@ -1,0 +1,16 @@
+# Smithery config for Fox Davidson Property Mortgage MCP
+# https://smithery.ai/docs
+
+startCommand:
+  type: stdio
+  configSchema:
+    # No user-supplied configuration required — tools are pure calculators
+    # with no API keys, no auth, no per-user state.
+    type: object
+    properties: {}
+    additionalProperties: false
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@foxdavidson/property-mortgage-mcp']
+    })

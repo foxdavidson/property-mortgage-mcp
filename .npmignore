@@ -1,0 +1,20 @@
+# Source TypeScript not needed at runtime (we ship dist/)
+src/
+tsconfig.json
+wrangler.toml
+
+# WebMCP browser script (separate distribution surface, not part of npm package)
+web/
+
+# Tests and local config
+smoke-test.sh
+claude_desktop_config.json
+claude-desktop-config.example.json
+scripts/
+
+# Build/dev artefacts
+node_modules/
+.git/
+.gitignore
+.DS_Store
+*.log

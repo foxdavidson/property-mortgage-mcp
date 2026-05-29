@@ -1,0 +1,11 @@
+{
+  "_comment": "Example Claude Desktop configuration. To use the Fox Davidson MCP server with Claude Desktop: 1) build the project (npm install && npm run build), 2) add this server block to your Claude Desktop config file (macOS: ~/Library/Application Support/Claude/claude_desktop_config.json, Windows: %APPDATA%\\Claude\\claude_desktop_config.json), 3) replace ABSOLUTE_PATH_TO_FD_MCP with the full path to your local clone, 4) restart Claude Desktop. The server's 2 tools will appear in the tools picker. Alternatively, with no local clone, use the published npm package: set command to 'npx' and args to ['-y', '@foxdavidson/property-mortgage-mcp'].",
+  "mcpServers": {
+    "fox-davidson-mortgage": {
+      "command": "node",
+      "args": [
+        "ABSOLUTE_PATH_TO_FD_MCP/dist/index-stdio.js"
+      ]
+    }
+  }
+}

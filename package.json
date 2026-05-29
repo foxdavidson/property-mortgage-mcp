@@ -1,0 +1,70 @@
+{
+  "name": "@foxdavidson/property-mortgage-mcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.foxdavidson/property-mortgage-mcp",
+  "description": "MCP server exposing UK mortgage calculators from Fox Davidson. UK stamp duty (SDLT/LBTT/LTT) and FCA MCOB 3A high net worth mortgage qualification.",
+  "type": "module",
+  "bin": {
+    "fd-mortgage-mcp": "./dist/index-stdio.js"
+  },
+  "main": "./dist/index-stdio.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev:stdio": "tsx src/index-stdio.ts",
+    "dev:http": "tsx src/index-http.ts",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy",
+    "start": "node dist/index-stdio.js",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index-stdio.js",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260519.1",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.93.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "uk-mortgage",
+    "mortgage-broker",
+    "stamp-duty",
+    "sdlt",
+    "lbtt",
+    "ltt",
+    "high-net-worth",
+    "mcob-3a",
+    "fox-davidson"
+  ],
+  "author": {
+    "name": "Fox Davidson",
+    "url": "https://www.foxdavidson.co.uk"
+  },
+  "homepage": "https://www.foxdavidson.co.uk/calculators/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foxdavidson/property-mortgage-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/foxdavidson/property-mortgage-mcp/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
