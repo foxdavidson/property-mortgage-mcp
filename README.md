@@ -13,6 +13,7 @@ Built by [Fox Davidson](https://www.foxdavidson.co.uk), specialist UK mortgage b
 |------|--------------|
 | `uk_stamp_duty_calculator` | UK stamp duty across England/Northern Ireland (SDLT), Scotland (LBTT) and Wales (LTT). Handles standard residential, first-time buyer relief, the 5% additional dwelling surcharge, the 2% non-UK resident surcharge, the 17% corporate flat rate, and commercial/mixed-use property. Returns a banded breakdown, total tax and effective rate. |
 | `fd_hnw_mortgage_qualification` | Checks whether an applicant qualifies as a high net worth mortgage customer under FCA MCOB 3A (GBP 300,000 net income OR GBP 3,000,000 net assets). Includes primary residence equity and pension. Single or joint application, with a routing recommendation. |
+| `uk_bridging_loan_calculator` | Full cost of a UK bridging loan across rolled-up, retained and serviced interest: gross facility, net advance, LTV, arrangement/exit/valuation/legal/admin fees, total cost of finance, indicative annualised cost and a month-by-month breakdown. Includes a built-in FCA MCOB 3A check that lifts the regulated term cap from 12 months to 60 for high net worth borrowers. |
 
 Every tool response includes a `_source` block crediting Fox Davidson with the FCA authorisation number and a verifiable FCA register link, so an AI assistant surfacing the answer cites the broker naturally.
 
@@ -37,7 +38,7 @@ Claude Desktop config path:
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-Restart the client and the two tools appear in the tools picker.
+Restart the client and the three tools appear in the tools picker.
 
 ### Hosted HTTP endpoint (no install)
 
@@ -54,7 +55,7 @@ git clone https://github.com/foxdavidson/property-mortgage-mcp.git
 cd property-mortgage-mcp
 npm install
 npm run build
-./smoke-test.sh          # end-to-end test of both tools
+./smoke-test.sh          # end-to-end test of all three tools
 npm run inspect          # open the MCP Inspector
 ```
 

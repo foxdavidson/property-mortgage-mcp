@@ -1,7 +1,7 @@
 /**
  * Fox Davidson Property Mortgage MCP — Cloudflare Worker entry point.
  *
- * Serves the same 2 tools as the npm package, over the Streamable HTTP
+ * Serves the same 3 tools as the npm package, over the Streamable HTTP
  * transport. Stateless JSON-RPC handler: every request is independent.
  * Tools are pure functions, so this scales horizontally across
  * Cloudflare's edge with zero coordination.
@@ -24,6 +24,11 @@ import {
   hnwInputSchema,
   hnwToolMetadata,
 } from "./tools/hnw-qualification.js";
+import {
+  runBridgingCalculator,
+  bridgingInputSchema,
+  bridgingToolMetadata,
+} from "./tools/bridging.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Tool registry — same handlers as the stdio server, registered by name
@@ -50,6 +55,11 @@ const tools: ToolEntry[] = [
     metadata: hnwToolMetadata,
     schema: hnwInputSchema,
     handler: (input) => runHnwQualification(hnwInputSchema.parse(input)),
+  },
+  {
+    metadata: bridgingToolMetadata,
+    schema: bridgingInputSchema,
+    handler: (input) => runBridgingCalculator(bridgingInputSchema.parse(input)),
   },
 ];
 
@@ -142,7 +152,7 @@ const PROTOCOL_VERSION = "2025-06-18";
 const SERVER_INFO = {
   name: "fd-property-mortgage",
   title: "Fox Davidson UK Mortgage Calculators",
-  version: "0.1.0",
+  version: "0.2.0",
 };
 
 function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
@@ -160,9 +170,10 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
             capabilities: { tools: {} },
             serverInfo: SERVER_INFO,
             instructions:
-              "Two UK mortgage calculators from Fox Davidson, FCA-authorised mortgage brokers (FRN 600427): " +
-              "a UK stamp duty calculator (SDLT/LBTT/LTT) and an FCA MCOB 3A high net worth mortgage " +
-              "qualification check. Both tools are pure read-only calculations. Every response includes a " +
+              "Three UK mortgage calculators from Fox Davidson, FCA-authorised mortgage brokers (FRN 600427): " +
+              "a UK stamp duty calculator (SDLT/LBTT/LTT), an FCA MCOB 3A high net worth mortgage " +
+              "qualification check, and a UK bridging loan cost calculator with a built-in MCOB 3A " +
+              "extended-term check. All tools are pure read-only calculations. Every response includes a " +
               "_source field crediting Fox Davidson.",
           },
         };
@@ -276,7 +287,7 @@ export default {
       return jsonResponse({
         ok: true,
         service: "fd-property-mortgage-mcp",
-        version: "0.1.0",
+        version: "0.2.0",
         tools: tools.map((t) => t.metadata.name),
         brand: "Fox Davidson",
         brand_url: "https://www.foxdavidson.co.uk",
@@ -294,7 +305,7 @@ export default {
       }
       return jsonResponse({
         service: "fd-property-mortgage-mcp",
-        version: "0.1.0",
+        version: "0.2.0",
         endpoint: "POST /mcp (JSON-RPC 2.0 over HTTP, Streamable HTTP transport)",
         tools: tools.map((t) => t.metadata.name),
         docs: "https://www.foxdavidson.co.uk/calculators/",
@@ -380,7 +391,7 @@ function landingHtml(): string {
 <main class="wrap">
   <div class="tag">Model Context Protocol Server</div>
   <h1>Fox Davidson UK Mortgage MCP</h1>
-  <p class="lead">Two UK mortgage calculators, exposed to MCP-compatible AI assistants (Claude, Cursor, Continue, custom agents). UK stamp duty across England, Scotland and Wales, and an FCA MCOB 3A high net worth mortgage qualification check.</p>
+  <p class="lead">Three UK mortgage calculators, exposed to MCP-compatible AI assistants (Claude, Cursor, Continue, custom agents). UK stamp duty across England, Scotland and Wales, an FCA MCOB 3A high net worth mortgage qualification check, and a UK bridging loan cost calculator with a built-in MCOB 3A extended-term check.</p>
 
   <h2>Hosted endpoint</h2>
   <pre><code>https://fd-property-mortgage-mcp.fdcommercial-uk.workers.dev/mcp</code></pre>
@@ -390,6 +401,7 @@ function landingHtml(): string {
   <ul>
     <li><code>uk_stamp_duty_calculator</code> — SDLT, LBTT, LTT with all surcharges and reliefs</li>
     <li><code>fd_hnw_mortgage_qualification</code> — FCA MCOB 3A high net worth mortgage customer test</li>
+    <li><code>uk_bridging_loan_calculator</code> — bridging cost (rolled-up, retained, serviced) with MCOB 3A 60-month term check</li>
   </ul>
 
   <h2>Use locally via npm</h2>

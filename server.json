@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.foxdavidson/property-mortgage-mcp",
-  "description": "UK mortgage calculators: stamp duty (SDLT/LBTT/LTT) and FCA MCOB 3A high net worth qualification.",
-  "version": "0.1.0",
+  "description": "UK mortgage calculators: stamp duty (SDLT/LBTT/LTT), FCA MCOB 3A high net worth qualification, and bridging loan cost with MCOB 3A term check.",
+  "version": "0.2.0",
   "repository": {
     "url": "https://github.com/foxdavidson/property-mortgage-mcp",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@foxdavidson/property-mortgage-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       }

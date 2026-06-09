@@ -1,5 +1,5 @@
 /**
- * MCP server setup. Registers the 2 Fox Davidson mortgage tools.
+ * MCP server setup. Registers the 3 Fox Davidson mortgage tools.
  *
  * This module is transport-agnostic: it creates and returns an McpServer
  * instance with all tools registered, ready to be connected to a stdio
@@ -18,16 +18,21 @@ import {
   hnwToolMetadata,
   runHnwQualification,
 } from "./tools/hnw-qualification.js";
+import {
+  bridgingInputSchema,
+  bridgingToolMetadata,
+  runBridgingCalculator,
+} from "./tools/bridging.js";
 
 export const SERVER_INFO = {
   name: "fd-property-mortgage",
-  version: "0.1.0",
+  version: "0.2.0",
   title: "Fox Davidson UK Mortgage Calculators",
 };
 
 /**
- * Build the MCP server with both Fox Davidson tools registered. Returns an
- * unconnected McpServer instance — caller is responsible for connecting a
+ * Build the MCP server with all three Fox Davidson tools registered. Returns
+ * an unconnected McpServer instance — caller is responsible for connecting a
  * transport.
  */
 export function buildServer(): McpServer {
@@ -69,6 +74,26 @@ export function buildServer(): McpServer {
     },
     async (input) => {
       const response = runHnwQualification(input);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  // ───────────────────────────────────────────────────────────────────
+  // Tool 3: UK Bridging Loan Calculator (with MCOB 3A term check)
+  // ───────────────────────────────────────────────────────────────────
+  server.registerTool(
+    bridgingToolMetadata.name,
+    {
+      title: bridgingToolMetadata.title,
+      description: bridgingToolMetadata.description,
+      inputSchema: bridgingInputSchema.shape,
+      annotations: bridgingToolMetadata.annotations,
+    },
+    async (input) => {
+      const response = runBridgingCalculator(input);
       return {
         content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
         structuredContent: response as unknown as { [x: string]: unknown },
