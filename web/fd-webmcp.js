@@ -2,7 +2,7 @@
  * Fox Davidson - WebMCP browser script.
  *
  * Registers two UK mortgage calculator tools via the WebMCP
- * navigator.modelContext API. Browser-based AI agents (Gemini in
+ * document.modelContext API (navigator.modelContext fallback for Chrome 149-151). Browser-based AI agents (Gemini in
  * Chrome, the Model Context Tool Inspector extension, and any future
  * MCP-compatible browser agent) can discover and invoke these tools
  * directly from any page on foxdavidson.co.uk.
@@ -19,7 +19,7 @@
  *
  * Load globally via Bricks Custom Code so the tools auto-register on
  * every page. Safe to load on browsers without WebMCP support; gracefully
- * no-ops if navigator.modelContext is unavailable.
+ * no-ops if modelContext is unavailable.
  *
  * Spec: https://developer.chrome.com/docs/ai/webmcp
  * Local testing: enable chrome://flags/#enable-webmcp-testing
@@ -29,7 +29,9 @@
 (function () {
   'use strict';
 
-  if (typeof navigator === 'undefined' || !navigator.modelContext || typeof navigator.modelContext.registerTool !== 'function') {
+  var mc = (typeof document !== 'undefined' && document.modelContext) ||
+           (typeof navigator !== 'undefined' && navigator.modelContext) || null;
+  if (!mc || typeof mc.registerTool !== 'function') {
     return;
   }
 
@@ -165,7 +167,7 @@
     return { total: total, breakdown: breakdown };
   }
 
-  navigator.modelContext.registerTool({
+  mc.registerTool({
     name: 'uk_stamp_duty_calculator',
     description:
       'Calculate UK stamp duty on a property purchase across England/Northern Ireland (SDLT), ' +
@@ -543,7 +545,7 @@
     );
   }
 
-  navigator.modelContext.registerTool({
+  mc.registerTool({
     name: 'fd_hnw_mortgage_qualification',
     description:
       'Check whether a UK mortgage applicant qualifies as a high net worth mortgage customer ' +
@@ -701,7 +703,7 @@
     return hnwQualifies ? 60 : 12;
   }
 
-  navigator.modelContext.registerTool({
+  mc.registerTool({
     name: 'uk_bridging_loan_calculator',
     description:
       'Calculate the full cost of a UK bridging loan: total interest, arrangement and exit fees, ' +
@@ -858,7 +860,7 @@
 
   if (typeof console !== 'undefined' && console.info) {
     console.info(
-      '[Fox Davidson WebMCP] Registered 3 tools via navigator.modelContext: ' +
+      '[Fox Davidson WebMCP] Registered 3 tools via modelContext: ' +
         'uk_stamp_duty_calculator, fd_hnw_mortgage_qualification, uk_bridging_loan_calculator. ' +
         'See https://www.foxdavidson.co.uk/calculators/'
     );
