@@ -1,0 +1,618 @@
+{
+ "contractor_day_rate": {
+  "question": "How does each lender annualise a contractor day rate?",
+  "columns": [
+   "lender",
+   "weeks",
+   "basis",
+   "conditions"
+  ],
+  "rows": [
+   {
+    "lender": "Coventry",
+    "weeks": 41,
+    "basis": "Day rate x 5 x 41",
+    "conditions": "Minimum \u00a350,000 gross annualised to use the day rate route",
+    "min_annual_gbp": 50000
+   },
+   {
+    "lender": "Halifax",
+    "weeks": 46,
+    "basis": "Daily rate x 5 days x 46 weeks",
+    "conditions": "Uses the lower of that figure and actual payslip income"
+   },
+   {
+    "lender": "NatWest",
+    "weeks": 46,
+    "basis": "Weekly contracted income x 46",
+    "conditions": "Day rate route applies above \u00a375,000 annualised, keyed as self-employed"
+   },
+   {
+    "lender": "Barclays",
+    "weeks": 46,
+    "basis": "Weekly income x 46 working weeks",
+    "conditions": "Hours assumed at a maximum of 40 a week unless the contract says fewer"
+   },
+   {
+    "lender": "Accord",
+    "weeks": 46,
+    "basis": "Maximum 46 weeks of the current contract",
+    "conditions": "Minimum \u00a3300 a day or \u00a350,000 a year, gaps of up to 8 weeks treated as normal",
+    "min_annual_gbp": 50000,
+    "min_day_rate_gbp": 300
+   },
+   {
+    "lender": "Virgin Money",
+    "weeks": 46,
+    "basis": "Current contract x 46 weeks",
+    "conditions": "Under \u00a350,000 needs 2 years contracting, CIS goes down the self-employed route",
+    "min_annual_gbp": 50000
+   },
+   {
+    "lender": "Skipton",
+    "weeks": 46,
+    "basis": "Daily contract rate x 5 x 46",
+    "conditions": "Pro-rated down for employment gaps over four weeks in the last 12 months"
+   },
+   {
+    "lender": "Aldermore",
+    "weeks": 46,
+    "basis": "Daily or weekly rate x 46",
+    "conditions": "Applies to self-employed, day rate and CIS contractors",
+    "route": "day rate and CIS"
+   },
+   {
+    "lender": "Metro Bank",
+    "weeks": 46,
+    "basis": "Daily rate over 46 weeks on a 5 day week",
+    "conditions": "Reduced where the contract restricts the borrower to fewer days"
+   },
+   {
+    "lender": "Pepper Money",
+    "weeks": 46,
+    "basis": "Day rate x 5 x 46",
+    "conditions": "Uses the lower of that and the 12 month average day rate"
+   },
+   {
+    "lender": "Suffolk BS",
+    "weeks": 46,
+    "basis": "Day rate x 5 days x 46 weeks",
+    "conditions": "No minimum income for contractors, 3 months must remain on the contract"
+   },
+   {
+    "lender": "Furness BS",
+    "weeks": 46,
+    "basis": "Daily rate over a 5 day week x 46",
+    "conditions": "Umbrella income taken as 3 payslips x 46, one year in the same industry"
+   },
+   {
+    "lender": "Vernon BS",
+    "weeks": 46,
+    "basis": "46 week multiplier",
+    "conditions": "Daily basis is not published, 12 months experience, no minimum income"
+   },
+   {
+    "lender": "Harpenden BS",
+    "weeks": 46,
+    "basis": "CIS vouchers annualised over 46 weeks",
+    "conditions": "Applies to CIS only. IT contractors are assessed as self-employed on 2 years figures"
+   },
+   {
+    "lender": "Kensington",
+    "weeks": 48,
+    "basis": "Weekly rate x 48",
+    "conditions": "Under 12 months contracting considered with an established CV"
+   },
+   {
+    "lender": "Bluestone",
+    "weeks": 48,
+    "basis": "Day rate x 5 x 48",
+    "conditions": "CIS workers need a 12 month history, vouchers or SA302s"
+   },
+   {
+    "lender": "Vida",
+    "weeks": 48,
+    "basis": "48 x weekly rate",
+    "conditions": "Day one contractors accepted with one year in the same line of work"
+   },
+   {
+    "lender": "Aldermore",
+    "weeks": 52,
+    "basis": "Average weekly income over 3 months x 52",
+    "conditions": "Fixed term contractors only, where tax and NI are paid at source",
+    "route": "fixed-term contract (PAYE at source)"
+   },
+   {
+    "lender": "Nationwide",
+    "weeks": 52,
+    "basis": "Day rate x days worked x 52 weeks",
+    "conditions": "Umbrella company route, umbrella must deduct full PAYE and NI"
+   }
+  ]
+ },
+ "retained_profit": {
+  "question": "Which lenders will use retained profit or share of net profit?",
+  "columns": [
+   "lender",
+   "uses_profit",
+   "detail"
+  ],
+  "rows": [
+   {
+    "lender": "HSBC",
+    "uses_profit": "Yes",
+    "detail": "Salary plus share of the last two years average net profit after corporation tax. Where the most recent year is lower than the two year average, the lower figure is used"
+   },
+   {
+    "lender": "Barclays",
+    "uses_profit": "Yes",
+    "detail": "Profit after tax plus director's salary. The profit used is capped at five times the average salary and dividends over the two most recent years. Where more than 25% of trading income is non-sterling, usable profit drops to 40%"
+   },
+   {
+    "lender": "Coventry",
+    "uses_profit": "Yes",
+    "detail": "At 20% shareholding or more: share of the latest year's net profit after corporation tax, excluding dividends, plus salary"
+   },
+   {
+    "lender": "Skipton",
+    "uses_profit": "Yes",
+    "detail": "Average of the latest two years share of net profit after corporation tax. Dividends cannot exceed net profit on either route"
+   },
+   {
+    "lender": "Accord",
+    "uses_profit": "Yes",
+    "detail": "Above 51% shareholding: salary plus share of net profits after corporation tax, using the latest year's salary and the last two years profit"
+   },
+   {
+    "lender": "Virgin Money",
+    "uses_profit": "Yes",
+    "detail": "At 20% shareholding or more: two year average share of net profit after tax plus director's salary. Self-employed applications are capped at 4.49 times income"
+   },
+   {
+    "lender": "Metro Bank",
+    "uses_profit": "Yes",
+    "detail": "Where every shareholder is party to the mortgage: profit before taxation plus directors remuneration. The only lender here using a pre-tax figure"
+   },
+   {
+    "lender": "Kensington",
+    "uses_profit": "Yes",
+    "detail": "Share of net business profits after tax plus salary"
+   },
+   {
+    "lender": "Pepper Money",
+    "uses_profit": "Yes",
+    "detail": "Majority shareholders only: share of the most recent year's trading net profit"
+   },
+   {
+    "lender": "Together",
+    "uses_profit": "Yes",
+    "detail": "Salary, dividends or retained profits for limited company directors. Sole traders assessed on net profit or SA302 total income"
+   },
+   {
+    "lender": "Harpenden BS",
+    "uses_profit": "Yes",
+    "detail": "Above 75% shareholding, with an accountant confirming the profits are distributable and held in liquid form. A 50% haircut is applied and the balance spread across the term"
+   },
+   {
+    "lender": "Vernon BS",
+    "uses_profit": "Yes",
+    "detail": "Share of net profit after tax. Profit before corporation tax is explicitly not considered"
+   },
+   {
+    "lender": "Handelsbanken",
+    "uses_profit": "Yes",
+    "detail": "Undrawn profits listed as an acceptable income type, alongside directors loan repayments and rental income"
+   },
+   {
+    "lender": "Market Harborough",
+    "uses_profit": "Case by case",
+    "detail": "Affordability runs on salary and dividends as standard. Retained profits and net profits are considered case by case"
+   },
+   {
+    "lender": "Nationwide",
+    "uses_profit": "No",
+    "detail": "Lower of the latest year, or the two year average, of salary and dividends"
+   },
+   {
+    "lender": "NatWest",
+    "uses_profit": "No",
+    "detail": "\"We will not accept income from retained profit or directors' loans\". Dividends must not exceed net profit after tax"
+   },
+   {
+    "lender": "Santander",
+    "uses_profit": "No",
+    "detail": "\"We don't accept retained profits\". Where dividends exceed net profit, the net profit figure caps the income used"
+   },
+   {
+    "lender": "Leeds BS",
+    "uses_profit": "No",
+    "detail": "At 25% shareholding or more, assessed on director's salary and dividends. Net profit is requested at decision in principle but not used for affordability"
+   },
+   {
+    "lender": "Aldermore",
+    "uses_profit": "No",
+    "detail": "Salary and dividends. Excluded entirely where the business recorded a net loss in the current or previous trading year, or carries losses forward"
+   },
+   {
+    "lender": "Bluestone",
+    "uses_profit": "No",
+    "detail": "Salary and dividends, plus director's pension, car allowance and home office use. Net profit used for sole traders and partnership shares only"
+   },
+   {
+    "lender": "Vida",
+    "uses_profit": "No",
+    "detail": "\"We will consider retained profit as a source of deposit however it cannot be used as income towards affordability\""
+   }
+  ]
+ },
+ "one_year_accounts": {
+  "question": "Which lenders accept one year's accounts?",
+  "columns": [
+   "lender",
+   "accepted",
+   "detail"
+  ],
+  "rows": [
+   {
+    "lender": "Kensington",
+    "accepted": "Yes",
+    "detail": "One year trading. Affordability based on the latest year's accounts. No published LTV restriction"
+   },
+   {
+    "lender": "Vida",
+    "accepted": "Yes",
+    "detail": "Trading under two years requires one year's evidence of income. Same wording applies to limited company directors"
+   },
+   {
+    "lender": "Pepper Money",
+    "accepted": "Yes",
+    "detail": "Minimum trading period of 12 months for limited companies, sole traders and partnerships"
+   },
+   {
+    "lender": "Together",
+    "accepted": "Yes",
+    "detail": "Twelve months trading. Projected income accepted after a minimum 18 months with an accountant's certificate"
+   },
+   {
+    "lender": "Bluestone",
+    "accepted": "Yes",
+    "detail": "Under two years: latest SA302 and tax overview, or latest certified accounts. Management or draft accounts are not accepted"
+   },
+   {
+    "lender": "Aldermore",
+    "accepted": "Yes",
+    "detail": "Under two years considered up to 90% LTV, and only on risk levels 1 to 3"
+   },
+   {
+    "lender": "Suffolk BS",
+    "accepted": "Yes",
+    "detail": "One year's accounts to a maximum 90% LTV, with 12 months in the same line of work beforehand"
+   },
+   {
+    "lender": "Harpenden BS",
+    "accepted": "Yes",
+    "detail": "One year plus a projection, where previously employed in the same line of business or moved from sole trader to limited company"
+   },
+   {
+    "lender": "Market Harborough",
+    "accepted": "Yes",
+    "detail": "Latest year's accounts, one year of projections from a chartered, certified or CIMA accountant in practice, and the latest SA302"
+   },
+   {
+    "lender": "Furness BS",
+    "accepted": "Yes",
+    "detail": "Between one and two years considered with evidence of a track record in a similar line of work"
+   },
+   {
+    "lender": "Halifax",
+    "accepted": "By exception",
+    "detail": "Not automatic. Individually assessed by an underwriter, needing SA302, an accountant's projection letter, and business and personal bank statements"
+   },
+   {
+    "lender": "Nationwide",
+    "accepted": "Named cases",
+    "detail": "Business takeover by a former employee, family business shareholders previously employed there, skilled professionals, and limited company landlords"
+   },
+   {
+    "lender": "NatWest",
+    "accepted": "No",
+    "detail": "Two full years trading required"
+   },
+   {
+    "lender": "Santander",
+    "accepted": "No",
+    "detail": "Two years as standard. All self-employed applications capped at 90% LTV. Above that needs three years and existing customer status"
+   },
+   {
+    "lender": "Coventry",
+    "accepted": "No",
+    "detail": "Business owned two years minimum, latest financial year no older than 12 months at application"
+   },
+   {
+    "lender": "Skipton",
+    "accepted": "No",
+    "detail": "Two years trading required"
+   },
+   {
+    "lender": "Leeds BS",
+    "accepted": "No",
+    "detail": "Two years of accounts or a completed accountant's certificate covering two years"
+   },
+   {
+    "lender": "Virgin Money",
+    "accepted": "No",
+    "detail": "Two years, with the latest accounts in date. Three years required on loans above \u00a31m"
+   },
+   {
+    "lender": "Metro Bank",
+    "accepted": "No",
+    "detail": "Two years trading with two years finalised figures. Uses the higher of the two or three year average"
+   },
+   {
+    "lender": "Vernon BS",
+    "accepted": "Standard range",
+    "detail": "Standard products need 24 months or more. Twelve to 23 months routes to their complex and non-standard income range instead"
+   },
+   {
+    "lender": "Handelsbanken",
+    "accepted": "No",
+    "detail": "Three years of tax return documentation for directors above 25% shareholding"
+   }
+  ]
+ },
+ "no_credit_scoring": {
+  "question": "Which lenders do not credit score?",
+  "columns": [
+   "lender",
+   "published_wording",
+   "detail"
+  ],
+  "rows": [
+   {
+    "lender": "Market Harborough",
+    "published_wording": "\"We don't credit score\"",
+    "detail": "Soft search at decision in principle with no footprint. A daily credit committee reviews each case on its merits. No maximum income multiple"
+   },
+   {
+    "lender": "Suffolk BS",
+    "published_wording": "\"We do not credit score\"",
+    "detail": "TransUnion used for reference only. No minimum income on standard applications"
+   },
+   {
+    "lender": "Furness BS",
+    "published_wording": "\"The Society does not use an automated affordability model. All applications are manually underwritten by our experienced underwriters\"",
+    "detail": "4.5 times income below \u00a380,000, 5.5 times at \u00a380,000 and above"
+   },
+   {
+    "lender": "Vernon BS",
+    "published_wording": "\"We manually underwrite every application\" and \"We don't use credit scoring\"",
+    "detail": "5.5 times income on both gross and net affordability. No minimum income. No maximum age at end of term"
+   },
+   {
+    "lender": "Harpenden BS",
+    "published_wording": "\"Lending is not score dependant. Each case is manually underwritten and credit reports will be manually assessed by an underwriter\"",
+    "detail": "Deals exclusively with intermediaries. No minimum income, full affordability assessment"
+   },
+   {
+    "lender": "Handelsbanken",
+    "published_wording": "\"All cases are manually underwritten\" with \"direct access to decision makers, regardless of loan amount\"",
+    "detail": "Self-certification of income is not permitted in any circumstances. 4.49 times used as a risk indicator rather than a hard cap"
+   }
+  ]
+ },
+ "bonus_commission": {
+  "question": "How much bonus and commission will a lender actually use?",
+  "columns": [
+   "lender",
+   "guaranteed",
+   "non_guaranteed"
+  ],
+  "rows": [
+   {
+    "lender": "Handelsbanken",
+    "guaranteed": "100%",
+    "non_guaranteed": "75% of a three year average with at least two years at the current employer, 50% of a two year average with at least one year, or 25% where there is only a one year track record"
+   },
+   {
+    "lender": "Market Harborough",
+    "guaranteed": "100%",
+    "non_guaranteed": "With a three year history: capped at 75% of basic where basic is under \u00a330,000, or 200% of basic where basic is over \u00a330,000. Irregular bonuses drop to 50% of the three year average capped at 50% of basic"
+   },
+   {
+    "lender": "Suffolk BS",
+    "guaranteed": "100%",
+    "non_guaranteed": "75% with a track record, being two years for an annual bonus or one year for monthly and quarterly. Irregular payments 50%. Overtime and second jobs 50%"
+   },
+   {
+    "lender": "Furness BS",
+    "guaranteed": "100%",
+    "non_guaranteed": "75% for non-guaranteed bonus, commission, overtime and shift enhancements. 100% within the LA, CA, PR and FY postcode area where evidenced"
+   },
+   {
+    "lender": "Harpenden BS",
+    "guaranteed": "100% with two years evidence",
+    "non_guaranteed": "50% where less than two years can be evidenced. Commission-only applicants considered case by case with 12 months in role and two years of proofs"
+   },
+   {
+    "lender": "Vernon BS",
+    "guaranteed": "Bonus accepted, percentage not published",
+    "non_guaranteed": "Commission at 50%. London weighting and large town allowance at 50%"
+   },
+   {
+    "lender": "Penrith BS",
+    "guaranteed": "Not published",
+    "non_guaranteed": "50% of regular bonus and commission"
+   }
+  ]
+ },
+ "foreign_currency": {
+  "question": "How do lenders treat foreign currency income?",
+  "columns": [
+   "lender",
+   "haircut",
+   "detail"
+  ],
+  "rows": [
+   {
+    "lender": "Suffolk BS",
+    "haircut": "20%",
+    "detail": "Converted to sterling then discounted 20%. GBP, EUR, CHF, NOK, USD, CAD, SGD, HKD, AED, KWD, QAR, AUD, NZD, DKK, SEK, SAR. Expat route needs \u00a340,000 equivalent minimum income"
+   },
+   {
+    "lender": "Harpenden BS",
+    "haircut": "20% or 30%",
+    "detail": "80% of income used in EUR, CHF, USD, AUD, CAD, DKK, SEK, NOK, NZD, SGD, SAR, AED, HKD, KWD, PLN and INR. 70% used in QAR, HUF, JPY, ZAR and THB"
+   },
+   {
+    "lender": "Market Harborough",
+    "haircut": "Not published",
+    "detail": "USD, CAD, EUR, CHF, HKD, SGD or other EU currency accepted as standard. Other currencies considered"
+   },
+   {
+    "lender": "Handelsbanken",
+    "haircut": "Currency specific",
+    "detail": "Income and assets in any non-sterling currency must be discounted, with the rate set in a separate foreign currency product guide. EUR, DKK, NOK, SEK and USD. UK residents, sterling loans, first charge on UK residential only"
+   },
+   {
+    "lender": "Penrith BS",
+    "haircut": "Product restricted",
+    "detail": "Dedicated foreign currency range at a maximum 80% LTV, minimum income \u00a330,000 equivalent, loans of \u00a350,000 to \u00a3450,000"
+   },
+   {
+    "lender": "Barclays",
+    "haircut": "Affects profit used",
+    "detail": "Where more than 25% of a company's trading income is non-sterling, the profit after tax usable for affordability reduces to 40%"
+   },
+   {
+    "lender": "Coutts",
+    "haircut": "Not published",
+    "detail": "\"We assess income and provide lending across a broad range of currencies\". No discount published"
+   },
+   {
+    "lender": "Vernon BS",
+    "haircut": "Not accepted",
+    "detail": "Foreign currency employment income: \"unable to consider\""
+   }
+  ]
+ },
+ "income_multiples": {
+  "question": "What are the maximum income multiples?",
+  "columns": [
+   "lender",
+   "multiple",
+   "condition"
+  ],
+  "rows": [
+   {
+    "lender": "Market Harborough",
+    "multiple": "None",
+    "condition": "No maximum income multiple. Affordability is the only constraint. Minimum loan \u00a3200,000"
+   },
+   {
+    "lender": "Furness BS",
+    "multiple": "5.5x",
+    "condition": "At income of \u00a380,000 and above. Below \u00a380,000 the multiple is 4.5x. Subject to affordability assessment"
+   },
+   {
+    "lender": "Vernon BS",
+    "multiple": "5.5x",
+    "condition": "Single and joint. Assessed on both gross and net income affordability"
+   },
+   {
+    "lender": "Suffolk BS",
+    "multiple": "5.49x",
+    "condition": "Where one applicant earns over \u00a375,000, or where 12 months of rent payments within 10% of the new mortgage payment can be evidenced. Otherwise 4.49x"
+   },
+   {
+    "lender": "Harpenden BS",
+    "multiple": "4.5x",
+    "condition": "Joint, up to four applicants. Extendable case by case through the BDM"
+   },
+   {
+    "lender": "Handelsbanken",
+    "multiple": "4.49x",
+    "condition": "Used as a risk indicator rather than a cap. Exceptions above 4.49x may be considered"
+   },
+   {
+    "lender": "Virgin Money",
+    "multiple": "4.49x",
+    "condition": "Applies where any applicant is self-employed. Rises to 5.5x on a remortgage with no additional borrowing up to 85% LTV"
+   },
+   {
+    "lender": "Santander",
+    "multiple": "4.45x",
+    "condition": "Standard multiple"
+   }
+  ]
+ },
+ "max_age": {
+  "question": "How late can the mortgage term run?",
+  "columns": [
+   "lender",
+   "max_age",
+   "condition"
+  ],
+  "rows": [
+   {
+    "lender": "Penrith BS",
+    "max_age": "102",
+    "condition": "As published in their criteria A to Z. Confirm on the individual case before relying on it"
+   },
+   {
+    "lender": "Vernon BS",
+    "max_age": "None",
+    "condition": "No maximum age at application or at end of term. Interest-only capped at 75 where the repayment vehicle is downsizing"
+   },
+   {
+    "lender": "Market Harborough",
+    "max_age": "85",
+    "condition": "Oldest applicant, owner-occupied. No maximum age on buy to let, holiday let or short-term loans"
+   },
+   {
+    "lender": "Harpenden BS",
+    "max_age": "No limit",
+    "condition": "But earned income is only counted to age 75. Beyond that only unearned and passive income is used. Lending in retirement capped at 70% LTV"
+   },
+   {
+    "lender": "Suffolk BS",
+    "max_age": "90",
+    "condition": "Where lending above 70% LTV. Earned income counted to 70 for manual occupations and 75 otherwise. Applicants over 75 need independent legal advice"
+   },
+   {
+    "lender": "Furness BS",
+    "max_age": "80",
+    "condition": "Term must end before the eldest applicant's 80th birthday. Where the term runs past retirement or 75, affordability is based on retirement income alone"
+   },
+   {
+    "lender": "Handelsbanken",
+    "max_age": "80",
+    "condition": "Capital and interest. Interest-only stops at 75 at end of term. Maximum term 35 years, and the age limit cannot be exceeded"
+   }
+  ]
+ },
+ "private_banks": {
+  "question": "What do private banks require?",
+  "columns": [
+   "lender",
+   "minimum_loan",
+   "detail"
+  ],
+  "rows": [
+   {
+    "lender": "Coutts",
+    "minimum_loan": "\u00a31.5m",
+    "detail": "Minimum loan for new clients should exceed \u00a31.5m. No minimum income requirement. Assesses bonuses, carried interest and equity income. UK properties only. No LTV, multiple or age limit published"
+   },
+   {
+    "lender": "Investec",
+    "minimum_loan": "\u00a31m",
+    "detail": "Minimum annual earnings of \u00a3300,000. Typically lends up to \u00a310m and may consider higher. Up to 95% LTV depending on circumstances. UK residents, England and Wales only. Terms to 35 years capital and interest, 25 years interest-only"
+   },
+   {
+    "lender": "Handelsbanken",
+    "minimum_loan": "Not published",
+    "detail": "No minimum income. 75% LTV standard, 85% on the standard plus matrix. All cases manually underwritten. Accepts undrawn profits, RSUs and vested shares, directors loan repayments. Maximum four applicants. England, Wales and Scotland"
+   }
+  ]
+ }
+}
