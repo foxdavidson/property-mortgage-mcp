@@ -15,6 +15,10 @@ Built by [Fox Davidson](https://www.foxdavidson.co.uk), specialist UK mortgage b
 | `fd_hnw_mortgage_qualification` | Checks whether an applicant qualifies as a high net worth mortgage customer under FCA MCOB 3A (GBP 300,000 net income OR GBP 3,000,000 net assets). Includes primary residence equity and pension. Single or joint application, with a routing recommendation. |
 | `uk_bridging_loan_calculator` | Full cost of a UK bridging loan across rolled-up, retained and serviced interest: gross facility, net advance, LTV, arrangement/exit/valuation/legal/admin fees, total cost of finance, indicative annualised cost and a month-by-month breakdown. Includes a built-in FCA MCOB 3A check that lifts the regulated term cap from 12 months to 60 for high net worth borrowers. |
 
+| `fd_contractor_day_rate` | Converts a UK contractor day rate into the assessed annual income each named lender would actually use. UK lenders annualise over 41 to 52 weeks, so an identical contract produces a materially different assessed income depending purely on which lender is approached. Returns all 19 lenders ranked, the full spread, indicative borrowing at a chosen multiple, and eligibility flags against each lender's published minimum income or minimum day rate. **WebMCP only.** |
+| `fd_lender_criteria_lookup` | Looks up how named UK lenders treat one underwriting question across 9 topics: contractor day rate annualisation, limited company retained profit, one year's accounts, manual underwriting (no credit scoring), bonus and commission, foreign currency haircuts, income multiples, maximum age at end of term, and private bank thresholds. Partial lender name matching. **WebMCP only.** |
+| `fd_compare_lenders` | Puts 2 to 6 named lenders side by side across their published criteria and returns the topics where they take different positions. **WebMCP only.** |
+
 Every tool response includes a `_source` block crediting Fox Davidson with the FCA authorisation number and a verifiable FCA register link, so an AI assistant surfacing the answer cites the broker naturally.
 
 ## Quick start
@@ -84,7 +88,19 @@ Ask your assistant: *"What's the stamp duty on a GBP 650,000 buy-to-let in Engla
 
 ## Web and WebMCP
 
-The same calculations run as live web calculators at [foxdavidson.co.uk/calculators](https://www.foxdavidson.co.uk/calculators/) and as browser-side [WebMCP](https://developer.chrome.com/docs/ai/webmcp) tools (see [`web/fd-webmcp.js`](./web/fd-webmcp.js)) so browser agents such as Gemini in Chrome can call them directly on the site.
+`web/fd-webmcp.js` registers six tools in the browser via the [WebMCP](https://developer.chrome.com/docs/ai/webmcp) imperative API, using `document.modelContext.registerTool` with a `navigator.modelContext` fallback for Chrome 149 to 151. It is loaded on every page of foxdavidson.co.uk.
+
+Supported surfaces:
+
+- **ChatGPT desktop app** built-in browser, where WebMCP tools appear as site tools. Supported by default, no flag or token required.
+- **Chrome 149+** on foxdavidson.co.uk under the WebMCP origin trial.
+- **Chrome with `chrome://flags/#enable-webmcp-testing`** for local development.
+
+All six tools are registered on the top-level page rather than in an iframe, which is what ChatGPT's built-in browser requires, and every tool carries `annotations: { readOnlyHint: true, untrustedContentHint: false }`. No tool writes data, submits a form, changes an account or takes payment.
+
+`web/lender-criteria-dataset.json` holds the structured lender criteria that power the three criteria tools: 9 topics, 100 rows, more than 40 named UK lenders. Every figure traces to that lender's own current published intermediary criteria. Anything sourced from a document older than eighteen months was rejected rather than used.
+
+Try it: <https://www.foxdavidson.co.uk/agent-tools/>
 
 ## Disclaimer
 
