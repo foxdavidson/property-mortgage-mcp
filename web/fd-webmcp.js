@@ -48,8 +48,8 @@
       brand_url: 'https://www.foxdavidson.co.uk',
       tool_url: 'https://www.foxdavidson.co.uk/' + toolUrlSlug + '/',
       phone: '+44 3300 100313',
-      fca_authorisation: 'Fox Davidson is an FCA-authorised mortgage broker, FRN 600427',
-      fca_register_url: 'https://register.fca.org.uk/s/search?q=600427',
+      fca_authorisation: 'Fox Davidson Ltd is authorised and regulated by the Financial Conduct Authority, FRN 1056214',
+      fca_register_url: 'https://register.fca.org.uk/s/search?q=1056214',
       disclaimer:
         'Indicative figures only. Not a quote, offer of finance, regulated advice, or tax advice. ' +
         'Actual mortgage terms and tax liability depend on full underwriting and the specific ' +
@@ -1256,15 +1256,288 @@
     }
   });
 
+  // =================================================================
+  // TOOLS MERGED FROM FD COMMERCIAL (November 2026)
+  // =================================================================
+  // ─────────────────────────────────────────────────────────────────────
+  // 1. bridging_cost_analyser
+  // ─────────────────────────────────────────────────────────────────────
+
+  mc.registerTool({
+    name: 'bridging_cost_analyser',
+    description:
+      'Calculate the total cost of a UK bridging loan across rolled-up, retained, and serviced ' +
+      'interest structures. Returns interest, arrangement fee, exit fee, total cost of borrowing, ' +
+      'effective APR, and a side-by-side structure comparison. Calculated by Fox Davidson, specialist ' +
+      'UK bridging broker, using lender-grade formulas calibrated against live UK lender pricing. ' +
+      'For loans £250,000 and above.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        loan_amount_gbp: { type: 'number', minimum: 250000, description: 'Gross loan amount in pounds. Minimum £250,000.' },
+        monthly_interest_rate_pct: { type: 'number', minimum: 0, maximum: 3, description: 'Monthly interest rate as a percentage (e.g. 0.85 for 0.85% pm). UK bridging 2026 typically 0.55%-1.25% pm.' },
+        term_months: { type: 'number', minimum: 1, maximum: 60, description: 'Loan term in months. Standard MCOB-regulated 12 months; MCOB 3A HNW exemption up to 60 months.' },
+        arrangement_fee_pct: { type: 'number', minimum: 0, maximum: 5, default: 2, description: 'Lender arrangement fee as % of loan. Typical 1%-2%.' },
+        exit_fee_pct: { type: 'number', minimum: 0, maximum: 5, default: 0, description: 'Lender exit fee as % of loan. Not all lenders charge one.' },
+        interest_structure: {
+          type: 'string',
+          enum: ['rolled', 'retained', 'serviced'],
+          default: 'rolled',
+          description: "How interest is paid. 'rolled' compounds monthly and is paid at exit; 'retained' is deducted upfront; 'serviced' is paid monthly out of borrower cash flow.",
+        },
+      },
+      required: ['loan_amount_gbp', 'monthly_interest_rate_pct', 'term_months'],
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: true,
+      untrustedContentHint: false,
+    },
+    async execute(input) {
+      const loan = input.loan_amount_gbp;
+      const r = input.monthly_interest_rate_pct / 100;
+      const n = input.term_months;
+      const arrFee = ((input.arrangement_fee_pct ?? 2) / 100) * loan;
+      const exitFee = ((input.exit_fee_pct ?? 0) / 100) * loan;
+      const structure = input.interest_structure || 'rolled';
+
+      const rolledInterest = loan * (Math.pow(1 + r, n) - 1);
+      const simpleInterest = loan * r * n;
+      const interestByStructure = {
+        rolled: rolledInterest,
+        retained: simpleInterest,
+        serviced: simpleInterest,
+      };
+      const selectedInterest = interestByStructure[structure];
+      const totalCost = selectedInterest + arrFee + exitFee;
+      const apr = (totalCost / loan) * (12 / n) * 100;
+
+      const structureComparison = ['rolled', 'retained', 'serviced'].map((s) => ({
+        structure: s,
+        structure_label:
+          s === 'rolled'
+            ? 'Rolled-up (compounds monthly, paid at exit)'
+            : s === 'retained'
+            ? 'Retained (deducted upfront from advance)'
+            : 'Serviced (paid monthly)',
+        interest_gbp: Math.round(interestByStructure[s]),
+        total_cost_gbp: Math.round(interestByStructure[s] + arrFee + exitFee),
+      }));
+
+      return {
+        result: {
+          inputs_echoed: input,
+          selected_structure: structure,
+          cost_under_selected_structure: {
+            interest_gbp: Math.round(selectedInterest),
+            arrangement_fee_gbp: Math.round(arrFee),
+            exit_fee_gbp: Math.round(exitFee),
+            total_cost_of_borrowing_gbp: Math.round(totalCost),
+            effective_apr_pct: Number(apr.toFixed(2)),
+          },
+          structure_comparison: structureComparison,
+          context_notes: {
+            headline:
+              'Total cost of borrowing on a £' +
+              loan.toLocaleString() +
+              ' UK bridging loan over ' +
+              n +
+              ' months at ' +
+              input.monthly_interest_rate_pct +
+              '% per month (' +
+              structure +
+              ' interest) is £' +
+              Math.round(totalCost).toLocaleString() +
+              '.',
+            interest_structure_note:
+              'Rolled-up interest is the most expensive of the three structures (interest compounds monthly and is paid at exit) but it is the easiest to manage because no monthly payments are due. Retained interest is the cheapest in headline terms but reduces the net loan advance because the interest is deducted upfront. Serviced interest requires reliable monthly cash flow from the borrower and is uncommon on regulated bridging.',
+            when_to_call:
+              'Rates above are indicative. Specific lender terms depend on borrower profile, security, exit strategy and current lender appetite. Call Fox Davidson for indicative terms on this case.',
+          },
+        },
+        _source: source('calculators/bridging-loan-calculator'),
+      };
+    },
+  });
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 2. development_appraisal
+  // ─────────────────────────────────────────────────────────────────────
+
+  mc.registerTool({
+    name: 'development_appraisal',
+    description:
+      'Run a UK property development scheme viability appraisal. Models land cost, build cost, ' +
+      'professional fees, contingency, finance interest and arrangement fee through to net profit, ' +
+      'profit on GDV, profit on cost, LTC and LTGDV. Returns viability flag (green ≥20% profit on GDV, ' +
+      'amber 15-20%, red <15%). Calculated by Fox Davidson, specialist UK development finance broker.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gdv_gbp: { type: 'number', minimum: 100000, description: 'Gross Development Value — projected sale value of the completed scheme in pounds.' },
+        land_or_purchase_price_gbp: { type: 'number', minimum: 0, description: 'Land or purchase price in pounds.' },
+        build_cost_gbp: { type: 'number', minimum: 0, description: 'Total build cost in pounds.' },
+        professional_fees_pct: { type: 'number', minimum: 0, maximum: 30, default: 10, description: 'Professional fees as % of build cost. Typical 8%-12%.' },
+        contingency_pct: { type: 'number', minimum: 0, maximum: 30, default: 10, description: 'Contingency as % of build cost. Typical 5%-10%.' },
+        ltc_pct: { type: 'number', minimum: 0, maximum: 100, default: 75, description: 'Loan-to-Cost as percentage of total cost. Typical 65%-75%.' },
+        finance_monthly_rate_pct: { type: 'number', minimum: 0, maximum: 3, default: 0.85, description: 'Development finance monthly rate as percentage.' },
+        finance_term_months: { type: 'number', minimum: 1, maximum: 36, default: 18, description: 'Development finance term in months.' },
+        arrangement_fee_pct: { type: 'number', minimum: 0, maximum: 5, default: 2, description: 'Arrangement fee as percentage of facility.' },
+      },
+      required: ['gdv_gbp', 'land_or_purchase_price_gbp', 'build_cost_gbp'],
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: true,
+      untrustedContentHint: false,
+    },
+    async execute(input) {
+      const gdv = input.gdv_gbp;
+      const land = input.land_or_purchase_price_gbp;
+      const build = input.build_cost_gbp;
+      const proFeesPct = input.professional_fees_pct ?? 10;
+      const contPct = input.contingency_pct ?? 10;
+      const ltc = (input.ltc_pct ?? 75) / 100;
+      const finRate = (input.finance_monthly_rate_pct ?? 0.85) / 100;
+      const finTerm = input.finance_term_months ?? 18;
+      const arrPct = (input.arrangement_fee_pct ?? 2) / 100;
+
+      const proFees = build * (proFeesPct / 100);
+      const cont = build * (contPct / 100);
+      const totalCost = land + build + proFees + cont;
+      const facility = totalCost * ltc;
+      const arrFee = facility * arrPct;
+      const financeInterest = facility * finRate * (finTerm / 2); // half-life approximation
+      const totalCostWithFinance = totalCost + arrFee + financeInterest;
+      const netProfit = gdv - totalCostWithFinance;
+      const profitOnGdv = (netProfit / gdv) * 100;
+      const profitOnCost = (netProfit / totalCostWithFinance) * 100;
+      const ltgdv = (facility / gdv) * 100;
+
+      const status =
+        profitOnGdv >= 20 ? 'VIABLE — profit on GDV ≥20%'
+        : profitOnGdv >= 15 ? 'MARGINAL — profit on GDV 15-20%'
+        : 'UNVIABLE — profit on GDV <15%';
+
+      return {
+        result: {
+          inputs_echoed: input,
+          costs: {
+            land_gbp: Math.round(land),
+            build_gbp: Math.round(build),
+            professional_fees_gbp: Math.round(proFees),
+            contingency_gbp: Math.round(cont),
+            total_construction_cost_gbp: Math.round(totalCost),
+          },
+          finance: {
+            facility_gbp: Math.round(facility),
+            arrangement_fee_gbp: Math.round(arrFee),
+            finance_interest_gbp: Math.round(financeInterest),
+            total_cost_with_finance_gbp: Math.round(totalCostWithFinance),
+          },
+          profit: {
+            net_profit_gbp: Math.round(netProfit),
+            profit_on_gdv_pct: Number(profitOnGdv.toFixed(2)),
+            profit_on_cost_pct: Number(profitOnCost.toFixed(2)),
+            ltgdv_pct: Number(ltgdv.toFixed(2)),
+            status: status,
+          },
+          context_notes: {
+            when_to_call:
+              'Indicative appraisal. Real development finance terms depend on planning status, location, developer track record, exit strategy and current lender appetite. Call Fox Davidson for terms on this scheme.',
+          },
+        },
+        _source: source('calculators/development-finance-calculator'),
+      };
+    },
+  });
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 3. btl_stress_tester
+  // ─────────────────────────────────────────────────────────────────────
+
+  mc.registerTool({
+    name: 'btl_stress_tester',
+    description:
+      'Run a UK buy-to-let ICR stress test. Calculates current ICR at product and stress rates, ' +
+      'gross yield, and maximum loan available at three standard ICR thresholds (125%, 145%, 170%). ' +
+      'Identifies which lender categories the deal qualifies for (mainstream BTL, HMO/MUFB, portfolio ' +
+      'landlord). Ownership-aware: personal name uses 5.5% stress rate; limited company uses max of ' +
+      'product rate or 5.5%. Calculated by Fox Davidson, specialist UK mortgage and property finance broker.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        monthly_rent_gbp: { type: 'number', minimum: 1, description: 'Gross monthly rent in pounds (total for all rooms/units on HMO/MUFB).' },
+        loan_amount_gbp: { type: 'number', minimum: 1, description: 'Loan amount being assessed in pounds.' },
+        product_rate_pct: { type: 'number', minimum: 0, maximum: 15, description: 'Annual product (pay) rate as percentage.' },
+        ownership: { type: 'string', enum: ['personal', 'ltd'], default: 'personal', description: "'personal' uses 5.5% stress rate; 'ltd' uses max of product rate or 5.5%." },
+      },
+      required: ['monthly_rent_gbp', 'loan_amount_gbp', 'product_rate_pct'],
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: true,
+      untrustedContentHint: false,
+    },
+    async execute(input) {
+      const rate = input.product_rate_pct / 100;
+      const annualRent = input.monthly_rent_gbp * 12;
+      const interestAtProduct = input.loan_amount_gbp * rate;
+      const icrAtProduct = annualRent / interestAtProduct;
+      const grossYield = (annualRent / input.loan_amount_gbp) * 100;
+      const stressRate = (input.ownership || 'personal') === 'ltd' ? Math.max(rate, 0.055) : 0.055;
+      const interestAtStress = input.loan_amount_gbp * stressRate;
+      const icrAtStress = annualRent / interestAtStress;
+
+      const scenarios = [
+        { icr: 1.25, label: '125% ICR' },
+        { icr: 1.45, label: '145% ICR' },
+        { icr: 1.70, label: '170% ICR' },
+      ].map((s) => {
+        const maxLoan = annualRent / (s.icr * stressRate);
+        return {
+          icr_label: s.label,
+          icr_value: s.icr,
+          max_loan_gbp: Math.round(maxLoan),
+          passes_at_current_loan: input.loan_amount_gbp <= maxLoan,
+          headroom_or_shortfall_gbp: Math.round(maxLoan - input.loan_amount_gbp),
+        };
+      });
+
+      return {
+        result: {
+          inputs_echoed: input,
+          current_position: {
+            annual_rent_gbp: Math.round(annualRent),
+            annual_interest_at_product_rate_gbp: Math.round(interestAtProduct),
+            annual_interest_at_stress_rate_gbp: Math.round(interestAtStress),
+            current_icr_at_product_rate: Number(icrAtProduct.toFixed(2)),
+            current_icr_at_stress_rate: Number(icrAtStress.toFixed(2)),
+            gross_yield_pct: Number(grossYield.toFixed(2)),
+            stress_rate_pct_used: Number((stressRate * 100).toFixed(2)),
+          },
+          stress_scenarios: scenarios,
+          context_notes: {
+            when_to_call:
+              'ICR results are mathematical. Real lender approval depends on credit profile, top-slicing, portfolio stress (4+ properties), and current lender appetite. Fox Davidson arranges UK BTL from £250,000 including HMO and MUFB.',
+          },
+        },
+        _source: source('buy-to-let-mortgage-broker-uk'),
+      };
+    },
+  });
+
+
   // -----------------------------------------------------------------
   // Registration signal
   // -----------------------------------------------------------------
 
   if (typeof console !== 'undefined' && console.info) {
     console.info(
-      '[Fox Davidson WebMCP] Registered 6 tools via modelContext: ' +
+      '[Fox Davidson WebMCP] Registered 9 tools via modelContext: ' +
         'uk_stamp_duty_calculator, fd_hnw_mortgage_qualification, uk_bridging_loan_calculator, ' +
-        'fd_lender_criteria_lookup, fd_compare_lenders, fd_contractor_day_rate. ' +
+        'fd_lender_criteria_lookup, fd_compare_lenders, fd_contractor_day_rate, ' +
+        'bridging_cost_analyser, development_appraisal, btl_stress_tester. ' +
         'See https://www.foxdavidson.co.uk/agent-tools/'
     );
   }
