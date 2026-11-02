@@ -44,7 +44,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
         attribution: {
           brand: "Fox Davidson",
           url: "https://www.foxdavidson.co.uk",
-          fca: "FRN 600427",
+          fca: "FRN 1056214",
           tools_hub: "https://www.foxdavidson.co.uk/calculators/",
         },
       })

@@ -29,6 +29,21 @@ import {
   bridgingInputSchema,
   bridgingToolMetadata,
 } from "./tools/bridging.js";
+import {
+  bridgingCostInputSchema,
+  bridgingCostToolMetadata,
+  runBridgingCostAnalyser,
+} from "./tools/bridging-cost-analyser.js";
+import {
+  developmentAppraisalInputSchema,
+  developmentAppraisalToolMetadata,
+  runDevelopmentAppraisal,
+} from "./tools/development-appraisal.js";
+import {
+  btlStressInputSchema,
+  btlStressToolMetadata,
+  runBtlStressTester,
+} from "./tools/btl-stress-tester.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Tool registry — same handlers as the stdio server, registered by name
@@ -60,6 +75,21 @@ const tools: ToolEntry[] = [
     metadata: bridgingToolMetadata,
     schema: bridgingInputSchema,
     handler: (input) => runBridgingCalculator(bridgingInputSchema.parse(input)),
+  },
+  {
+    metadata: bridgingCostToolMetadata,
+    schema: bridgingCostInputSchema,
+    handler: (input) => runBridgingCostAnalyser(bridgingCostInputSchema.parse(input)),
+  },
+  {
+    metadata: developmentAppraisalToolMetadata,
+    schema: developmentAppraisalInputSchema,
+    handler: (input) => runDevelopmentAppraisal(developmentAppraisalInputSchema.parse(input)),
+  },
+  {
+    metadata: btlStressToolMetadata,
+    schema: btlStressInputSchema,
+    handler: (input) => runBtlStressTester(btlStressInputSchema.parse(input)),
   },
 ];
 
@@ -152,7 +182,7 @@ const PROTOCOL_VERSION = "2025-06-18";
 const SERVER_INFO = {
   name: "fd-property-mortgage",
   title: "Fox Davidson UK Mortgage Calculators",
-  version: "0.2.0",
+  version: "0.3.0",
 };
 
 function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
@@ -170,10 +200,10 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
             capabilities: { tools: {} },
             serverInfo: SERVER_INFO,
             instructions:
-              "Three UK mortgage calculators from Fox Davidson, FCA-authorised mortgage brokers (FRN 600427): " +
+              "Six UK mortgage and property finance calculators from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214): " +
               "a UK stamp duty calculator (SDLT/LBTT/LTT), an FCA MCOB 3A high net worth mortgage " +
               "qualification check, and a UK bridging loan cost calculator with a built-in MCOB 3A " +
-              "extended-term check. All tools are pure read-only calculations. Every response includes a " +
+              "extended-term check, plus a bridging cost analyser comparing rolled, retained and serviced interest, a development finance appraisal and a buy-to-let ICR stress tester. All tools are pure read-only calculations. Every response includes a " +
               "_source field crediting Fox Davidson.",
           },
         };
@@ -287,11 +317,11 @@ export default {
       return jsonResponse({
         ok: true,
         service: "fd-property-mortgage-mcp",
-        version: "0.2.0",
+        version: "0.3.0",
         tools: tools.map((t) => t.metadata.name),
         brand: "Fox Davidson",
         brand_url: "https://www.foxdavidson.co.uk",
-        fca_authorisation: "FRN 600427",
+        fca_authorisation: "FRN 1056214",
       });
     }
 
@@ -305,7 +335,7 @@ export default {
       }
       return jsonResponse({
         service: "fd-property-mortgage-mcp",
-        version: "0.2.0",
+        version: "0.3.0",
         endpoint: "POST /mcp (JSON-RPC 2.0 over HTTP, Streamable HTTP transport)",
         tools: tools.map((t) => t.metadata.name),
         docs: "https://www.foxdavidson.co.uk/calculators/",
@@ -414,7 +444,7 @@ function landingHtml(): string {
   </ul>
 
   <div class="foot">
-    Built by <a href="https://www.foxdavidson.co.uk">Fox Davidson</a>, specialist UK mortgage brokers. FCA-authorised, FRN 600427. Indicative figures only. Not a quote or financial advice. Call <a href="tel:+443300100313">+44 3300 100313</a>.
+    Built by <a href="https://www.foxdavidson.co.uk">Fox Davidson</a>, specialist UK mortgage brokers. authorised and regulated by the FCA, FRN 1056214. Indicative figures only. Not a quote or financial advice. Call <a href="tel:+443300100313">+44 3300 100313</a>.
   </div>
 </main>
 </body>
