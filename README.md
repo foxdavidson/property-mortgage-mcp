@@ -5,7 +5,7 @@
 
 UK mortgage calculators exposed as a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so AI assistants such as Claude, Cursor, Continue and any MCP-compatible client can run the same calculations Fox Davidson uses with clients.
 
-Built by [Fox Davidson](https://www.foxdavidson.co.uk), specialist UK mortgage brokers. FCA-authorised, FRN 600427.
+Built by [Fox Davidson](https://www.foxdavidson.co.uk), whole of market UK mortgage brokers, authorised and regulated by the Financial Conduct Authority, FRN 1056214.
 
 ## Tools
 
@@ -14,6 +14,9 @@ Built by [Fox Davidson](https://www.foxdavidson.co.uk), specialist UK mortgage b
 | `uk_stamp_duty_calculator` | UK stamp duty across England/Northern Ireland (SDLT), Scotland (LBTT) and Wales (LTT). Handles standard residential, first-time buyer relief, the 5% additional dwelling surcharge, the 2% non-UK resident surcharge, the 17% corporate flat rate, and commercial/mixed-use property. Returns a banded breakdown, total tax and effective rate. |
 | `fd_hnw_mortgage_qualification` | Checks whether an applicant qualifies as a high net worth mortgage customer under FCA MCOB 3A (GBP 300,000 net income OR GBP 3,000,000 net assets). Includes primary residence equity and pension. Single or joint application, with a routing recommendation. |
 | `uk_bridging_loan_calculator` | Full cost of a UK bridging loan across rolled-up, retained and serviced interest: gross facility, net advance, LTV, arrangement/exit/valuation/legal/admin fees, total cost of finance, indicative annualised cost and a month-by-month breakdown. Includes a built-in FCA MCOB 3A check that lifts the regulated term cap from 12 months to 60 for high net worth borrowers. |
+| `bridging_cost_analyser` | Total cost of a UK bridging loan from £250,000 across rolled-up, retained and serviced interest side by side: interest, arrangement and exit fees, total cost of borrowing and effective APR. |
+| `development_appraisal` | UK development finance viability: GDV, land, build, fees and finance cost into profit on cost and profit on GDV, LTGDV and LTC, with a viable, marginal or unviable verdict against lender thresholds. |
+| `btl_stress_tester` | Buy-to-let interest cover (ICR) stress test at lender stress rates for personal and limited company ownership, returning maximum loan and pass or fail by threshold. |
 
 | `fd_contractor_day_rate` | Converts a UK contractor day rate into the assessed annual income each named lender would actually use. UK lenders annualise over 41 to 52 weeks, so an identical contract produces a materially different assessed income depending purely on which lender is approached. Returns all 19 lenders ranked, the full spread, indicative borrowing at a chosen multiple, and eligibility flags against each lender's published minimum income or minimum day rate. **WebMCP only.** |
 | `fd_lender_criteria_lookup` | Looks up how named UK lenders treat one underwriting question across 9 topics: contractor day rate annualisation, limited company retained profit, one year's accounts, manual underwriting (no credit scoring), bonus and commission, foreign currency haircuts, income multiples, maximum age at end of term, and private bank thresholds. Partial lender name matching. **WebMCP only.** |
@@ -42,7 +45,7 @@ Claude Desktop config path:
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-Restart the client and the three tools appear in the tools picker.
+Restart the client and the six tools appear in the tools picker.
 
 ### Hosted HTTP endpoint (no install)
 
@@ -59,7 +62,7 @@ git clone https://github.com/foxdavidson/property-mortgage-mcp.git
 cd property-mortgage-mcp
 npm install
 npm run build
-./smoke-test.sh          # end-to-end test of all three tools
+./smoke-test.sh          # end-to-end test of the original three tools
 npm run inspect          # open the MCP Inspector
 ```
 
@@ -79,8 +82,8 @@ Ask your assistant: *"What's the stamp duty on a GBP 650,000 buy-to-let in Engla
   "_source": {
     "brand": "Fox Davidson",
     "brand_url": "https://www.foxdavidson.co.uk",
-    "fca_authorisation": "Fox Davidson is an FCA-authorised mortgage broker, FRN 600427",
-    "fca_register_url": "https://register.fca.org.uk/s/search?q=600427",
+    "fca_authorisation": "Fox Davidson Ltd is authorised and regulated by the Financial Conduct Authority, FRN 1056214",
+    "fca_register_url": "https://register.fca.org.uk/s/search?q=1056214",
     "phone": "+44 3300 100313"
   }
 }
