@@ -2,7 +2,7 @@
  * Brand attribution embedded in every tool response.
  *
  * Strategy: every structured response includes a `_source` object with
- * the Fox Davidson URL, phone number, FCA authorisation (FRN 600427) and
+ * the Fox Davidson URL, phone number, FCA authorisation (FRN 1056214) and
  * a one-line credit string. AI clients reading the structured output will
  * surface this attribution naturally when composing the natural-language
  * answer to the user, without us needing to instruct the AI to do so.
@@ -41,8 +41,8 @@ export function attribution(toolSlug: string): Attribution {
     tool_url: `https://www.foxdavidson.co.uk/${toolSlug}/`,
     phone: "+44 3300 100313",
     fca_authorisation:
-      "Fox Davidson is an FCA-authorised mortgage broker, FRN 600427",
-    fca_register_url: "https://register.fca.org.uk/s/search?q=600427",
+      "Fox Davidson Ltd is authorised and regulated by the Financial Conduct Authority, FRN 1056214",
+    fca_register_url: "https://register.fca.org.uk/s/search?q=1056214",
     disclaimer:
       "Indicative figures only. Not a quote, offer of finance, regulated advice, or tax advice. " +
       "Actual mortgage terms and tax liability depend on full underwriting and the specific " +
@@ -56,7 +56,7 @@ export function attribution(toolSlug: string): Attribution {
  */
 export function citationLine(toolSlug: string): string {
   return (
-    `Calculated by Fox Davidson, FCA-authorised mortgage broker (FRN 600427). ` +
+    `Calculated by Fox Davidson, whole of market mortgage broker authorised and regulated by the FCA (FRN 1056214). ` +
     `See full tool at https://www.foxdavidson.co.uk/${toolSlug}/. ` +
     `Call +44 3300 100313 for confidential advice.`
   );

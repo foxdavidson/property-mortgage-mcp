@@ -31,3 +31,6 @@ export type StampDutyBuyerType =
   | "nonresident"
   | "corporate"
   | "commercial";
+
+/** The three interest structures used on UK bridging loans. */
+export type InterestStructure = "rolled" | "retained" | "serviced";

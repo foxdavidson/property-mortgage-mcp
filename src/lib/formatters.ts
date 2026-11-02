@@ -22,3 +22,9 @@ export function pct(n: number, alreadyPercent = false): string {
   const value = alreadyPercent ? n : n * 100;
   return value.toFixed(2) + "%";
 }
+
+/** Format an ICR-style multiplier. 1.45 -> "1.45x" */
+export function multiple(n: number): string {
+  if (!isFinite(n)) return "-";
+  return n.toFixed(2) + "x";
+}
