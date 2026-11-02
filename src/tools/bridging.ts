@@ -310,7 +310,7 @@ export const bridgingToolMetadata = {
     "upfront) and serviced (paid monthly) interest. Also runs the FCA MCOB 3A high net worth check: " +
     "on a regulated bridge, an applicant with annual net income of at least GBP 300,000 OR net " +
     "assets of at least GBP 3,000,000 can have a term up to 60 months instead of the standard " +
-    "12-month cap. Calculated by Fox Davidson, FCA-authorised UK mortgage brokers (FRN 600427). " +
+    "12-month cap. Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
     "Use when a user asks what a bridging loan costs, about bridging interest (rolled-up, retained " +
     "or serviced), bridging LTV, regulated vs unregulated bridging, or the maximum term on a " +
     "regulated bridge.",

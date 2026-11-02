@@ -239,7 +239,7 @@ export const stampDutyToolMetadata = {
     "resident surcharge (England/NI), the 17% corporate flat rate for company purchases above " +
     "GBP 500k (England/NI), and commercial or mixed-use property. Returns banded breakdown, " +
     "total tax payable and effective rate. Uses current 2026 bands and surcharge rates. " +
-    "Calculated by Fox Davidson, FCA-authorised UK mortgage brokers (FRN 600427). Use when a " +
+    "Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). Use when a " +
     "user asks about stamp duty, SDLT, LBTT, LTT, additional dwelling surcharge, ADS, " +
     "first-time buyer relief, non-resident surcharge, or tax on a specific UK property purchase.",
   annotations: {

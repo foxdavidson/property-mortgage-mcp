@@ -397,7 +397,7 @@ export const hnwToolMetadata = {
     "FCA glossary G2953 and UK lender practice) and INCLUDES pension by default. Supports single " +
     "applicant or joint application. Returns verdict, per-applicant test breakdown, joint household " +
     "aggregate (if joint), and a routing recommendation including the relevant UK private bank list. " +
-    "Calculated by Fox Davidson, FCA-authorised UK mortgage brokers (FRN 600427). Use when a user " +
+    "Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). Use when a user " +
     "asks whether they qualify for a high net worth mortgage, about MCOB 3A, the GBP 300k income or " +
     "GBP 3m net assets test, private bank mortgages, or large loans against assets.",
   annotations: {
