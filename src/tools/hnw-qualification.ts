@@ -1,5 +1,5 @@
 /**
- * HNW MORTGAGE QUALIFICATION (FCA MCOB 3A test) — Fox Davidson
+ * HNW MORTGAGE QUALIFICATION (FCA high net worth definition test) — Fox Davidson
  *
  * Mirrors the live Fox Davidson HNW Mortgage Qualification Calculator at
  * /calculators/hnw-mortgage-qualification-calculator/. Applies the FCA
@@ -19,7 +19,7 @@ import type { ToolResponse } from "../lib/types.js";
 const INCOME_THRESHOLD = 300000;
 const ASSETS_THRESHOLD = 3000000;
 const PRIVATE_BANK_LIST =
-  "Coutts, Weatherbys, Investec, JP Morgan Private Bank, UBS Wealth, and Barclays Private Bank";
+  "Coutts, Investec, C. Hoare & Co, Weatherbys, Hampden & Co, Arbuthnot Latham, Handelsbanken, Barclays Private Bank and Butterfield";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Input schema
@@ -92,7 +92,7 @@ const applicantSchema = z.object({
     .default(true)
     .describe(
       "Whether to include pension in the GBP 3m net assets calculation. UK lenders applying " +
-        "MCOB 3A typically include pension. Set to false for the conservative view."
+        "the FCA high net worth definition typically include pension. Set to false for the conservative view."
     ),
 });
 
@@ -205,43 +205,43 @@ function routingForApplicant(t: HnwTest): string {
       "contribution. Under the literal FCA reading that UK lenders apply, primary residence " +
       "equity counts in the GBP 3m test. This is the route that solves the asset-rich-income-poor " +
       "problem: substantial wealth in property, modest current earned income, qualifying access " +
-      "to MCOB 3A residential lending. UK private banks lending against asset position under MCOB " +
-      "3A include " +
+      "to high net worth residential lending. UK private banks lending against asset position " +
+      "include " +
       PRIVATE_BANK_LIST +
-      ". Fox Davidson arranges residential mortgages from GBP 250,000 to over GBP 25m on this route."
+      ". Fox Davidson arranges large and high net worth mortgages from GBP 1,000,000 on this route."
     );
   }
   if (t.income_pass && t.net_assets_pass) {
     return (
-      "Meets both the income and net assets tests. Access to the full range of MCOB 3A " +
+      "Meets both the income and net assets tests. Access to the full range of high net worth " +
       "residential mortgage routes including UK private bank lending, specialist HNW lenders, and " +
-      "individual affordability assessment. UK private banks lending under MCOB 3A include " +
+      "individual affordability assessment. UK private banks that lend to high net worth clients include " +
       PRIVATE_BANK_LIST +
       "."
     );
   }
   if (t.income_pass) {
     return (
-      "Meets the income test. Access to specialist residential mortgage routes that fall outside " +
-      "standard MCOB 11.6 affordability rules. Lenders can offer income multiples in the 6x to 10x " +
-      "range on the right profile, against the 4.5x cap that applies to standard MCOB 11 lending. " +
-      "UK private banks lending under MCOB 3A include " +
+      "Meets the income test. Lenders can assess affordability individually under the FCA high net worth " +
+      "mortgage rules rather than on a fixed income multiple. UK private banks that lend to high net " +
+      "worth clients include " +
       PRIVATE_BANK_LIST +
-      ". Specialist HNW lenders include Saffron Building Society and Hodge Bank."
+      ". Fox Davidson secures 5.5 to 6.5 times income, sometimes higher, for clients earning over " +
+      "GBP 60,000."
     );
   }
   if (t.net_assets_pass) {
     return (
       "Meets the net assets test. Asset-led affordability allows lenders to lend against the wider " +
       "wealth position rather than current earned income alone. UK private banks lending against " +
-      "asset position under MCOB 3A include " +
+      "asset position include " +
       PRIVATE_BANK_LIST +
       "."
     );
   }
   return (
-    "Does not currently meet either limb of the MCOB 3A test. Standard MCOB 11.6 affordability " +
-    "rules apply. May still access enhanced income multiples through high street and specialist " +
+    "Does not currently meet either limb of the FCA high net worth test. Standard MCOB 11.6 " +
+    "affordability rules apply. May still access enhanced income multiples through high street and specialist " +
     "lenders (5.5x to 6.5x available to high earners on GBP 60,000 to GBP 150,000 income through " +
     "professional schemes) without needing to meet the full HNW test."
   );
@@ -321,15 +321,15 @@ export function runHnwQualification(input: HnwInput): ToolResponse<HnwResult> {
     const aggregateOnly = !anyIndividualQualifies && tA.qualifies;
 
     if (bothQualify) {
-      out.verdict = "Both applicants qualify under MCOB 3A";
+      out.verdict = "Both applicants meet the FCA high net worth definition";
       out.routing_recommendation = routingForApplicant(tA);
     } else if (anyIndividualQualifies) {
-      out.verdict = "Applicant " + (t1.qualifies ? "1" : "2") + " qualifies under MCOB 3A";
+      out.verdict = "Applicant " + (t1.qualifies ? "1" : "2") + " meets the FCA high net worth definition";
       out.routing_recommendation =
         routingForApplicant(t1.qualifies ? t1 : t2) +
-        " Most lenders will write the case on the qualifying applicant's MCOB 3A status, with the " +
-        "second applicant treated under standard MCOB 11. Some lenders apply a stricter joint-test " +
-        "requirement.";
+        " Most lenders will write the case on the qualifying applicant's status. Under MCOB 1.2.3B R only one " +
+        "borrower on a joint application needs to meet the definition. Some lenders apply a stricter " +
+        "joint-test requirement.";
     } else if (aggregateOnly) {
       out.verdict = "Joint household aggregate qualifies (individuals do not)";
       out.routing_recommendation =
@@ -341,7 +341,7 @@ export function runHnwQualification(input: HnwInput): ToolResponse<HnwResult> {
         PRIVATE_BANK_LIST +
         ", subject to relationship status and jointly held asset structure.";
     } else {
-      out.verdict = "Neither applicant qualifies under MCOB 3A";
+      out.verdict = "Neither applicant meets the FCA high net worth definition";
       out.routing_recommendation =
         "Neither applicant meets either limb of the test individually, and the joint household " +
         "aggregate does not meet the threshold either. Standard MCOB 11.6 affordability rules " +
@@ -351,27 +351,27 @@ export function runHnwQualification(input: HnwInput): ToolResponse<HnwResult> {
     }
   } else {
     out.verdict = t1.qualifies
-      ? "Qualifies under MCOB 3A"
-      : "Does not currently qualify under MCOB 3A";
+      ? "Meets the FCA high net worth definition"
+      : "Does not currently meet the FCA high net worth definition";
     out.routing_recommendation = routingForApplicant(t1);
   }
 
   out.context_notes = {
     rule_summary:
-      "FCA MCOB 1.2.10R defines a high net worth mortgage customer as someone with annual net " +
+      "The FCA Handbook Glossary defines a high net worth mortgage customer as someone with annual net " +
       "income of at least GBP 300,000 OR net assets of at least GBP 3,000,000. The test is binary " +
-      "on each limb. MCOB 3A applies once qualified, disapplying standard MCOB 11.6 affordability " +
-      "rules and allowing lenders to use an individual affordability assessment.",
+      "on each limb. Once met, the FCA high net worth mortgage rules let lenders assess affordability " +
+      "individually rather than under the standard MCOB 11.6 test.",
     primary_residence_note:
       "The literal FCA glossary G2953 text does not exclude primary residence from the net assets " +
-      "test. UK lenders applying MCOB 3A include the customer primary residence equity in the net " +
+      "test. UK lenders read the definition literally and include the customer primary residence equity in the net " +
       "assets calculation. The HNW INVESTOR exemption under COBS 4.7 is a separate FCA regime that " +
       "does exclude primary residence; it does not apply to mortgages.",
     pension_note: t1.pension_included_in_test
       ? "Pension included in the net assets test (default)."
       : "Pension excluded from the net assets test (conservative view).",
     when_to_call:
-      "The MCOB 3A test is the regulatory gateway, not an underwriting decision. Lender-specific " +
+      "The FCA high net worth definition is the regulatory gateway, not an underwriting decision. Lender-specific " +
       "HNW programmes apply additional eligibility criteria including residency, employment status, " +
       "and source of wealth verification. Speak to Fox Davidson to identify which lender will write " +
       "your case.",
@@ -389,16 +389,16 @@ export function runHnwQualification(input: HnwInput): ToolResponse<HnwResult> {
 
 export const hnwToolMetadata = {
   name: "fd_hnw_mortgage_qualification",
-  title: "HNW Mortgage Qualification (FCA MCOB 3A)",
+  title: "HNW Mortgage Qualification (FCA high net worth definition)",
   description:
     "Check whether a UK mortgage applicant qualifies as a high net worth mortgage customer under " +
-    "FCA MCOB 3A. The test passes if annual net income is at least GBP 300,000 OR net assets are " +
+    "the FCA high net worth definition. The test passes if annual net income is at least GBP 300,000 OR net assets are " +
     "at least GBP 3,000,000. The net assets test INCLUDES primary residence equity (per the literal " +
     "FCA glossary G2953 and UK lender practice) and INCLUDES pension by default. Supports single " +
     "applicant or joint application. Returns verdict, per-applicant test breakdown, joint household " +
     "aggregate (if joint), and a routing recommendation including the relevant UK private bank list. " +
     "Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). Use when a user " +
-    "asks whether they qualify for a high net worth mortgage, about MCOB 3A, the GBP 300k income or " +
+    "asks whether they qualify for a high net worth mortgage, about the FCA high net worth test, the GBP 300k income or " +
     "GBP 3m net assets test, private bank mortgages, or large loans against assets.",
   annotations: {
     readOnlyHint: true,

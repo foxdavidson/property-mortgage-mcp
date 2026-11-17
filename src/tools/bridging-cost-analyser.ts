@@ -42,7 +42,7 @@ export const bridgingCostInputSchema = z.object({
     .min(1)
     .max(60)
     .describe(
-      "Loan term in months. Standard MCOB-regulated bridging caps at 12 months. MCOB 3A HNW exemption allows up to 60 months. Example: 12."
+      "Loan term in months. Regulated bridging usually runs to 12 months; lenders write up to 60 months for borrowers meeting the FCA high net worth definition. Example: 12."
     ),
   arrangement_fee_pct: z
     .number()

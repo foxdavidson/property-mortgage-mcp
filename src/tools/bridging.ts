@@ -1,12 +1,11 @@
 /**
- * UK BRIDGING LOAN CALCULATOR (with MCOB 3A term check) — Fox Davidson
+ * UK BRIDGING LOAN CALCULATOR (with high net worth term check) — Fox Davidson
  *
  * Mirrors the live Fox Davidson bridging loan calculator at
  * /calculators/bridging-loan-calculator/. Returns the full cost of a UK
  * bridging loan across rolled-up, retained and serviced interest, plus a
- * built-in FCA MCOB 3A high net worth check that determines whether a
- * regulated bridge can run up to 60 months instead of the standard 12-month
- * cap.
+ * built-in FCA high net worth check that shows whether lenders will write
+ * a regulated facility for up to 60 months rather than the usual 12.
  *
  * Ported verbatim from the Fox Davidson WebMCP browser tool
  * (web/fd-webmcp.js) so web, WebMCP and Anthropic MCP outputs are identical.
@@ -95,7 +94,7 @@ export const bridgingInputSchema = z.object({
     .min(0)
     .default(0)
     .describe(
-      "Optional. Borrower annual net income, used for the MCOB 3A high net worth term check. " +
+      "Optional. Borrower annual net income, used for the FCA high net worth term check. " +
         "GBP 300,000 or more passes the income limb."
     ),
   net_assets_gbp: z
@@ -104,7 +103,7 @@ export const bridgingInputSchema = z.object({
     .default(0)
     .describe(
       "Optional. Borrower net assets including main residence equity and pension, minus all debts, " +
-        "used for the MCOB 3A high net worth term check. GBP 3,000,000 or more passes the net assets limb."
+        "used for the FCA high net worth term check. GBP 3,000,000 or more passes the net assets limb."
     ),
 });
 
@@ -142,7 +141,7 @@ interface BridgingResult {
   funds_released_beyond_existing_gbp: number;
   indicative_annualised_cost_pct: number;
   term_months: number;
-  mcob_3a_eligibility: {
+  high_net_worth_term_check: {
     regulated: boolean;
     income_limb_pass: boolean;
     net_assets_limb_pass: boolean;
@@ -154,7 +153,7 @@ interface BridgingResult {
   month_by_month: ScheduleRow[];
   context_notes: {
     method_note: string;
-    mcob_note: string;
+    regulation_note: string;
     when_to_call: string;
   };
 }
@@ -178,7 +177,7 @@ export function runBridgingCalculator(input: BridgingInput): ToolResponse<Bridgi
   const income = input.annual_net_income_gbp || 0;
   const assets = input.net_assets_gbp || 0;
 
-  // MCOB 3A high net worth term eligibility
+  // FCA high net worth term eligibility
   const incomePass = income >= INCOME_THRESHOLD;
   const assetsPass = assets >= ASSETS_THRESHOLD;
   const hnwQualifies = incomePass || assetsPass;
@@ -237,13 +236,13 @@ export function runBridgingCalculator(input: BridgingInput): ToolResponse<Bridgi
 
   let termStatus: string;
   if (!regulated) {
-    termStatus = "Unregulated bridge: no MCOB term cap applies.";
+    termStatus = "Unregulated bridge: the term is set by the lender.";
   } else if (hnwQualifies) {
-    termStatus = "Regulated, high net worth (MCOB 3A): extended term up to 60 months available.";
+    termStatus = "Regulated, high net worth: lenders will write terms up to 60 months.";
   } else {
     termStatus =
-      "Regulated, standard: 12-month MCOB cap applies. Provide income or net assets to test for " +
-      "the 60-month MCOB 3A extension.";
+      "Regulated, standard: lenders typically limit the term to 12 months. Provide income or net " +
+      "assets to test for the 60-month high net worth route.";
   }
 
   const result: BridgingResult = {
@@ -262,7 +261,7 @@ export function runBridgingCalculator(input: BridgingInput): ToolResponse<Bridgi
     funds_released_beyond_existing_gbp: Math.round(releaseBeyondExisting),
     indicative_annualised_cost_pct: Number(annualised.toFixed(1)),
     term_months: months,
-    mcob_3a_eligibility: {
+    high_net_worth_term_check: {
       regulated,
       income_limb_pass: incomePass,
       net_assets_limb_pass: assetsPass,
@@ -278,11 +277,13 @@ export function runBridgingCalculator(input: BridgingInput): ToolResponse<Bridgi
         "interest are simple interest on the gross facility across the term, and cost the same in " +
         "total; rolled-up costs more. Total cost of finance is interest plus all fees, excluding " +
         "repayment of the principal borrowed.",
-      mcob_note:
-        "A standard regulated bridge is capped at 12 months under FCA MCOB 11. The MCOB 3A high " +
-        "net worth exemption (annual net income of at least GBP 300,000 OR net assets of at least " +
-        "GBP 3,000,000, with main residence equity and pension included in the net assets figure) " +
-        "lifts the cap to 60 months on a regulated bridge.",
+      regulation_note:
+        "There is no FCA cap on the term of a regulated facility. Past 12 months it stops being a " +
+        "bridging loan in Handbook terms and runs as a regulated mortgage contract. Lenders will write " +
+        "terms up to 60 months for borrowers who meet the FCA high net worth definition (annual net " +
+        "income of at least GBP 300,000 OR net assets of at least GBP 3,000,000, with main residence " +
+        "equity and pension included by lenders). Fox Davidson arranges regulated bridging where the " +
+        "main security is a first charge.",
       when_to_call:
         "A bridging loan rewards lender selection. Rates, fees, LTV limits and underwriting " +
         "appetite vary widely, and the wrong choice on a time-critical deal can cost the purchase. " +
@@ -302,15 +303,15 @@ export function runBridgingCalculator(input: BridgingInput): ToolResponse<Bridgi
 
 export const bridgingToolMetadata = {
   name: "uk_bridging_loan_calculator",
-  title: "UK Bridging Loan Calculator (with MCOB 3A term check)",
+  title: "UK Bridging Loan Calculator (with high net worth term check)",
   description:
     "Calculate the full cost of a UK bridging loan: total interest, arrangement and exit fees, " +
     "valuation/legal/admin costs, gross facility, net advance, loan-to-value, total cost of finance " +
     "and an indicative annualised cost. Supports rolled-up (compounding), retained (deducted " +
-    "upfront) and serviced (paid monthly) interest. Also runs the FCA MCOB 3A high net worth check: " +
-    "on a regulated bridge, an applicant with annual net income of at least GBP 300,000 OR net " +
-    "assets of at least GBP 3,000,000 can have a term up to 60 months instead of the standard " +
-    "12-month cap. Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
+    "upfront) and serviced (paid monthly) interest. Also runs the FCA high net worth check: " +
+    "on a regulated bridge, lenders will write terms up to 60 months for an applicant with annual " +
+    "net income of at least GBP 300,000 OR net assets of at least GBP 3,000,000, against the usual " +
+    "12 months. Calculated by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
     "Use when a user asks what a bridging loan costs, about bridging interest (rolled-up, retained " +
     "or serviced), bridging LTV, regulated vs unregulated bridging, or the maximum term on a " +
     "regulated bridge.",
