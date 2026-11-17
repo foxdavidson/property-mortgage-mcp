@@ -13,6 +13,11 @@ name = "fd-property-mortgage-mcp"
 main = "src/worker.ts"
 compatibility_date = "2026-05-01"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[[routes]]
+pattern = "mcp.foxdavidson.co.uk"
+custom_domain = true
 
 [observability]
 enabled = true

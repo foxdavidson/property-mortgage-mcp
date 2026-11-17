@@ -1,8 +1,8 @@
 {
   "name": "@foxdavidson/property-mortgage-mcp",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "mcpName": "io.github.foxdavidson/property-mortgage-mcp",
-  "description": "MCP server exposing UK mortgage and property finance calculators from Fox Davidson: stamp duty (SDLT/LBTT/LTT), FCA MCOB 3A high net worth qualification, bridging loan cost with MCOB 3A term check, bridging cost analyser across interest structures, development finance appraisal and buy-to-let ICR stress test.",
+  "description": "MCP server from Fox Davidson: UK stamp duty, FCA high net worth qualification, bridging cost, bridging cost analyser, development appraisal, buy-to-let ICR stress test, plus a lender criteria lookup, lender comparison and contractor day rate calculator across 40+ named UK lenders.",
   "type": "module",
   "bin": {
     "fd-mortgage-mcp": "./dist/index-stdio.js"

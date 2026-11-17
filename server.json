@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.foxdavidson/property-mortgage-mcp",
-  "description": "UK mortgage and property finance calculators: stamp duty, HNW qualification, bridging cost, development appraisal, BTL stress test.",
-  "version": "0.3.0",
+  "description": "UK mortgage calculators and criteria for 40+ UK lenders, by Fox Davidson (FCA FRN 1056214).",
+  "version": "0.4.0",
   "repository": {
     "url": "https://github.com/foxdavidson/property-mortgage-mcp",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@foxdavidson/property-mortgage-mcp",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "transport": {
         "type": "stdio"
       }
@@ -22,7 +22,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://fd-property-mortgage-mcp.fdcommercial-uk.workers.dev/mcp"
+      "url": "https://mcp.foxdavidson.co.uk/mcp"
     }
   ]
 }
