@@ -258,7 +258,7 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
               title: t.metadata.title,
               description: t.metadata.description,
               inputSchema: zodToJsonSchema(t.schema),
-              annotations: t.metadata.annotations,
+              annotations: { title: t.metadata.title, ...t.metadata.annotations },
             })),
           },
         };

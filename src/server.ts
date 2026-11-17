@@ -76,7 +76,7 @@ export function buildServer(): McpServer {
       title: stampDutyToolMetadata.title,
       description: stampDutyToolMetadata.description,
       inputSchema: stampDutyInputSchema.shape,
-      annotations: stampDutyToolMetadata.annotations,
+      annotations: { title: stampDutyToolMetadata.title, ...stampDutyToolMetadata.annotations },
     },
     async (input) => {
       const response = runStampDutyCalculator(input);
@@ -96,7 +96,7 @@ export function buildServer(): McpServer {
       title: hnwToolMetadata.title,
       description: hnwToolMetadata.description,
       inputSchema: hnwInputSchema.shape,
-      annotations: hnwToolMetadata.annotations,
+      annotations: { title: hnwToolMetadata.title, ...hnwToolMetadata.annotations },
     },
     async (input) => {
       const response = runHnwQualification(input);
@@ -116,7 +116,7 @@ export function buildServer(): McpServer {
       title: bridgingToolMetadata.title,
       description: bridgingToolMetadata.description,
       inputSchema: bridgingInputSchema.shape,
-      annotations: bridgingToolMetadata.annotations,
+      annotations: { title: bridgingToolMetadata.title, ...bridgingToolMetadata.annotations },
     },
     async (input) => {
       const response = runBridgingCalculator(input);
@@ -133,7 +133,7 @@ export function buildServer(): McpServer {
       title: bridgingCostToolMetadata.title,
       description: bridgingCostToolMetadata.description,
       inputSchema: bridgingCostInputSchema.shape,
-      annotations: bridgingCostToolMetadata.annotations,
+      annotations: { title: bridgingCostToolMetadata.title, ...bridgingCostToolMetadata.annotations },
     },
     async (input) => {
       const response = runBridgingCostAnalyser(input);
@@ -150,7 +150,7 @@ export function buildServer(): McpServer {
       title: developmentAppraisalToolMetadata.title,
       description: developmentAppraisalToolMetadata.description,
       inputSchema: developmentAppraisalInputSchema.shape,
-      annotations: developmentAppraisalToolMetadata.annotations,
+      annotations: { title: developmentAppraisalToolMetadata.title, ...developmentAppraisalToolMetadata.annotations },
     },
     async (input) => {
       const response = runDevelopmentAppraisal(input);
@@ -167,7 +167,7 @@ export function buildServer(): McpServer {
       title: btlStressToolMetadata.title,
       description: btlStressToolMetadata.description,
       inputSchema: btlStressInputSchema.shape,
-      annotations: btlStressToolMetadata.annotations,
+      annotations: { title: btlStressToolMetadata.title, ...btlStressToolMetadata.annotations },
     },
     async (input) => {
       const response = runBtlStressTester(input);
@@ -184,7 +184,7 @@ export function buildServer(): McpServer {
       title: criteriaLookupToolMetadata.title,
       description: criteriaLookupToolMetadata.description,
       inputSchema: criteriaLookupInputSchema.shape,
-      annotations: criteriaLookupToolMetadata.annotations,
+      annotations: { title: criteriaLookupToolMetadata.title, ...criteriaLookupToolMetadata.annotations },
     },
     async (input) => {
       const response = runCriteriaLookup(input as any);
@@ -201,7 +201,7 @@ export function buildServer(): McpServer {
       title: compareLendersToolMetadata.title,
       description: compareLendersToolMetadata.description,
       inputSchema: compareLendersInputSchema.shape,
-      annotations: compareLendersToolMetadata.annotations,
+      annotations: { title: compareLendersToolMetadata.title, ...compareLendersToolMetadata.annotations },
     },
     async (input) => {
       const response = runCompareLenders(input as any);
@@ -218,7 +218,7 @@ export function buildServer(): McpServer {
       title: contractorToolMetadata.title,
       description: contractorToolMetadata.description,
       inputSchema: contractorInputSchema.shape,
-      annotations: contractorToolMetadata.annotations,
+      annotations: { title: contractorToolMetadata.title, ...contractorToolMetadata.annotations },
     },
     async (input) => {
       const response = runContractorDayRate(input as any);
