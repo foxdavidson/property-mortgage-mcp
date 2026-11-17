@@ -44,6 +44,17 @@ import {
   btlStressToolMetadata,
   runBtlStressTester,
 } from "./tools/btl-stress-tester.js";
+import {
+  criteriaLookupInputSchema,
+  criteriaLookupToolMetadata,
+  runCriteriaLookup,
+  compareLendersInputSchema,
+  compareLendersToolMetadata,
+  runCompareLenders,
+  contractorInputSchema,
+  contractorToolMetadata,
+  runContractorDayRate,
+} from "./tools/criteria.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Tool registry — same handlers as the stdio server, registered by name
@@ -91,6 +102,21 @@ const tools: ToolEntry[] = [
     schema: btlStressInputSchema,
     handler: (input) => runBtlStressTester(btlStressInputSchema.parse(input)),
   },
+  {
+    metadata: criteriaLookupToolMetadata,
+    schema: criteriaLookupInputSchema,
+    handler: (input) => runCriteriaLookup(criteriaLookupInputSchema.parse(input)),
+  },
+  {
+    metadata: compareLendersToolMetadata,
+    schema: compareLendersInputSchema,
+    handler: (input) => runCompareLenders(compareLendersInputSchema.parse(input)),
+  },
+  {
+    metadata: contractorToolMetadata,
+    schema: contractorInputSchema,
+    handler: (input) => runContractorDayRate(contractorInputSchema.parse(input)),
+  },
 ];
 
 const toolsByName = new Map(tools.map((t) => [t.metadata.name, t]));
@@ -128,6 +154,12 @@ function zodTypeToJsonSchema(value: z.ZodTypeAny): Record<string, unknown> {
       if (check.kind === "min" && typeof check.value === "number") prop.minimum = check.value;
       if (check.kind === "max" && typeof check.value === "number") prop.maximum = check.value;
     }
+  } else if (field instanceof z.ZodArray) {
+    const items = zodTypeToJsonSchema(field._def.type as z.ZodTypeAny);
+    delete (items as { __optional?: boolean }).__optional;
+    prop = { type: "array", items };
+    if (field._def.minLength) prop.minItems = field._def.minLength.value;
+    if (field._def.maxLength) prop.maxItems = field._def.maxLength.value;
   } else if (field instanceof z.ZodString) {
     prop = { type: "string" };
   } else if (field instanceof z.ZodBoolean) {
@@ -182,7 +214,7 @@ const PROTOCOL_VERSION = "2025-06-18";
 const SERVER_INFO = {
   name: "fd-property-mortgage",
   title: "Fox Davidson UK Mortgage Calculators",
-  version: "0.3.0",
+  version: "0.4.0",
 };
 
 function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
@@ -200,11 +232,12 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
             capabilities: { tools: {} },
             serverInfo: SERVER_INFO,
             instructions:
-              "Six UK mortgage and property finance calculators from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214): " +
-              "a UK stamp duty calculator (SDLT/LBTT/LTT), an FCA MCOB 3A high net worth mortgage " +
-              "qualification check, and a UK bridging loan cost calculator with a built-in MCOB 3A " +
-              "extended-term check, plus a bridging cost analyser comparing rolled, retained and serviced interest, a development finance appraisal and a buy-to-let ICR stress tester. All tools are pure read-only calculations. Every response includes a " +
-              "_source field crediting Fox Davidson.",
+              "Nine UK mortgage and property finance tools from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
+              "Calculators: UK stamp duty (SDLT/LBTT/LTT), FCA high net worth mortgage qualification, bridging loan cost with a high net worth term check, " +
+              "bridging cost analyser (rolled, retained, serviced interest), development finance appraisal and buy-to-let ICR stress test. " +
+              "Lender data: a criteria lookup across 40+ named UK lenders (contractor income, retained profit, one year accounts, bonus, foreign currency, " +
+              "income multiples, maximum age, private banks), a side-by-side lender comparison, and a contractor day rate calculator showing assessed income lender by lender. " +
+              "All tools are read-only. Every response includes a _source field crediting Fox Davidson. Figures are indicative, not advice or a lending decision.",
           },
         };
       }
@@ -237,6 +270,8 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
           return { jsonrpc: "2.0", id, error: { code: -32602, message: "Missing tool name in params" } };
         }
         const entry = toolsByName.get(params.name);
+        // One structured log line per call, counted in Workers Observability.
+        console.log(JSON.stringify({ event: "tool_call", tool: params.name }));
         if (!entry) {
           return { jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown tool: ${params.name}` } };
         }
@@ -317,7 +352,7 @@ export default {
       return jsonResponse({
         ok: true,
         service: "fd-property-mortgage-mcp",
-        version: "0.3.0",
+        version: "0.4.0",
         tools: tools.map((t) => t.metadata.name),
         brand: "Fox Davidson",
         brand_url: "https://www.foxdavidson.co.uk",
@@ -335,7 +370,7 @@ export default {
       }
       return jsonResponse({
         service: "fd-property-mortgage-mcp",
-        version: "0.3.0",
+        version: "0.4.0",
         endpoint: "POST /mcp (JSON-RPC 2.0 over HTTP, Streamable HTTP transport)",
         tools: tools.map((t) => t.metadata.name),
         docs: "https://www.foxdavidson.co.uk/calculators/",
@@ -396,7 +431,7 @@ function landingHtml(): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fox Davidson UK Mortgage MCP</title>
-<meta name="description" content="UK mortgage calculators exposed as an MCP server. Stamp duty (SDLT/LBTT/LTT) and FCA MCOB 3A high net worth mortgage qualification.">
+<meta name="description" content="UK mortgage calculators and lender criteria data exposed as an MCP server by Fox Davidson: stamp duty, high net worth qualification, bridging, development, buy to let and 40+ lenders compared.">
 <style>
   :root { --orange:#ea5b0c; --dark:#111013; --light:#f5f5f5; --mid:#666; }
   * { box-sizing:border-box; }
@@ -421,17 +456,23 @@ function landingHtml(): string {
 <main class="wrap">
   <div class="tag">Model Context Protocol Server</div>
   <h1>Fox Davidson UK Mortgage MCP</h1>
-  <p class="lead">Three UK mortgage calculators, exposed to MCP-compatible AI assistants (Claude, Cursor, Continue, custom agents). UK stamp duty across England, Scotland and Wales, an FCA MCOB 3A high net worth mortgage qualification check, and a UK bridging loan cost calculator with a built-in MCOB 3A extended-term check.</p>
+  <p class="lead">Nine UK mortgage and property finance tools for MCP-compatible AI assistants (ChatGPT, Claude, Cursor and custom agents): six calculators and three lender criteria tools covering 40+ named UK lenders.</p>
 
   <h2>Hosted endpoint</h2>
-  <pre><code>https://fd-property-mortgage-mcp.fdcommercial-uk.workers.dev/mcp</code></pre>
+  <pre><code>https://mcp.foxdavidson.co.uk/mcp</code></pre>
   <p>Streamable HTTP transport, JSON-RPC 2.0. Stateless. Free to use.</p>
 
   <h2>Tools</h2>
   <ul>
-    <li><code>uk_stamp_duty_calculator</code> — SDLT, LBTT, LTT with all surcharges and reliefs</li>
-    <li><code>fd_hnw_mortgage_qualification</code> — FCA MCOB 3A high net worth mortgage customer test</li>
-    <li><code>uk_bridging_loan_calculator</code> — bridging cost (rolled-up, retained, serviced) with MCOB 3A 60-month term check</li>
+    <li><code>uk_stamp_duty_calculator</code>: SDLT, LBTT and LTT with surcharges and reliefs</li>
+    <li><code>fd_hnw_mortgage_qualification</code>: FCA high net worth mortgage customer test</li>
+    <li><code>uk_bridging_loan_calculator</code>: bridging cost (rolled-up, retained, serviced) with a high net worth term check</li>
+    <li><code>bridging_cost_analyser</code>: compares rolled, retained and serviced interest</li>
+    <li><code>development_appraisal</code>: profit on GDV and cost, LTC, LTGDV, viability</li>
+    <li><code>btl_stress_tester</code>: buy-to-let ICR at 125%, 145% and 170%</li>
+    <li><code>fd_lender_criteria_lookup</code>: how named lenders treat contractor income, retained profit, one year accounts and more</li>
+    <li><code>fd_compare_lenders</code>: two to six lenders side by side</li>
+    <li><code>fd_contractor_day_rate</code>: day rate to assessed income, lender by lender</li>
   </ul>
 
   <h2>Use locally via npm</h2>
@@ -444,7 +485,7 @@ function landingHtml(): string {
   </ul>
 
   <div class="foot">
-    Built by <a href="https://www.foxdavidson.co.uk">Fox Davidson</a>, specialist UK mortgage brokers. authorised and regulated by the FCA, FRN 1056214. Indicative figures only. Not a quote or financial advice. Call <a href="tel:+443300100313">+44 3300 100313</a>.
+    Built by <a href="https://www.foxdavidson.co.uk">Fox Davidson</a>, whole of market UK mortgage brokers, authorised and regulated by the FCA, FRN 1056214. Indicative figures only. Not a quote or financial advice. Tools are read-only and store no personal data. <a href="https://www.foxdavidson.co.uk/privacy-notice/">Privacy notice</a>. Call <a href="tel:+443300100313">+44 3300 100313</a>.
   </div>
 </main>
 </body>

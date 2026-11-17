@@ -1,5 +1,5 @@
 /**
- * MCP server setup. Registers the 6 Fox Davidson mortgage tools.
+ * MCP server setup. Registers the 9 Fox Davidson mortgage tools.
  *
  * This module is transport-agnostic: it creates and returns an McpServer
  * instance with all tools registered, ready to be connected to a stdio
@@ -38,15 +38,26 @@ import {
   btlStressToolMetadata,
   runBtlStressTester,
 } from "./tools/btl-stress-tester.js";
+import {
+  criteriaLookupInputSchema,
+  criteriaLookupToolMetadata,
+  runCriteriaLookup,
+  compareLendersInputSchema,
+  compareLendersToolMetadata,
+  runCompareLenders,
+  contractorInputSchema,
+  contractorToolMetadata,
+  runContractorDayRate,
+} from "./tools/criteria.js";
 
 export const SERVER_INFO = {
   name: "fd-property-mortgage",
-  version: "0.3.0",
+  version: "0.4.0",
   title: "Fox Davidson UK Mortgage Calculators",
 };
 
 /**
- * Build the MCP server with all six Fox Davidson tools registered. Returns
+ * Build the MCP server with all nine Fox Davidson tools registered. Returns
  * an unconnected McpServer instance — caller is responsible for connecting a
  * transport.
  */
@@ -77,7 +88,7 @@ export function buildServer(): McpServer {
   );
 
   // ───────────────────────────────────────────────────────────────────
-  // Tool 2: HNW Mortgage Qualification (FCA MCOB 3A)
+  // Tool 2: HNW Mortgage Qualification (FCA high net worth definition)
   // ───────────────────────────────────────────────────────────────────
   server.registerTool(
     hnwToolMetadata.name,
@@ -97,7 +108,7 @@ export function buildServer(): McpServer {
   );
 
   // ───────────────────────────────────────────────────────────────────
-  // Tool 3: UK Bridging Loan Calculator (with MCOB 3A term check)
+  // Tool 3: UK Bridging Loan Calculator (with high net worth term check)
   // ───────────────────────────────────────────────────────────────────
   server.registerTool(
     bridgingToolMetadata.name,
@@ -160,6 +171,57 @@ export function buildServer(): McpServer {
     },
     async (input) => {
       const response = runBtlStressTester(input);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    criteriaLookupToolMetadata.name,
+    {
+      title: criteriaLookupToolMetadata.title,
+      description: criteriaLookupToolMetadata.description,
+      inputSchema: criteriaLookupInputSchema.shape,
+      annotations: criteriaLookupToolMetadata.annotations,
+    },
+    async (input) => {
+      const response = runCriteriaLookup(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    compareLendersToolMetadata.name,
+    {
+      title: compareLendersToolMetadata.title,
+      description: compareLendersToolMetadata.description,
+      inputSchema: compareLendersInputSchema.shape,
+      annotations: compareLendersToolMetadata.annotations,
+    },
+    async (input) => {
+      const response = runCompareLenders(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    contractorToolMetadata.name,
+    {
+      title: contractorToolMetadata.title,
+      description: contractorToolMetadata.description,
+      inputSchema: contractorInputSchema.shape,
+      annotations: contractorToolMetadata.annotations,
+    },
+    async (input) => {
+      const response = runContractorDayRate(input as any);
       return {
         content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
         structuredContent: response as unknown as { [x: string]: unknown },
