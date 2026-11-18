@@ -114,7 +114,7 @@ export const criteriaLookupToolMetadata = {
     "annualisation, limited company retained profit, one year of accounts, lenders that do not credit " +
     "score, bonus and commission, foreign currency income, maximum income multiples, maximum age at end " +
     "of term, and private bank thresholds. Returns each lender's published position with the conditions " +
-    "attached, from 40+ UK lenders. Lenders publish their own criteria but none publish the comparison. " +
+    "attached, from 40+ UK lenders. " +
     "Sourced by Fox Davidson, whole of market UK mortgage brokers authorised and regulated by the FCA " +
     "(FRN 1056214). Use when a user asks which lenders accept a type of income or circumstance.",
   annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
