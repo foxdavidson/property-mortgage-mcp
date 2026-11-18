@@ -348,6 +348,12 @@ export default {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
+    if (url.pathname === "/.well-known/openai-apps-challenge" && request.method === "GET") {
+      return new Response("DJ4fVUV66qb8IQKM-lL3t8VuUWtHjCgBhXZRSCOtQgk", {
+        headers: { "content-type": "text/plain; charset=utf-8" },
+      });
+    }
+
     if (url.pathname === "/health" && request.method === "GET") {
       return jsonResponse({
         ok: true,
