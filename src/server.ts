@@ -49,10 +49,21 @@ import {
   contractorToolMetadata,
   runContractorDayRate,
 } from "./tools/criteria.js";
+import {
+  prequalifierInputSchema,
+  prequalifierToolMetadata,
+  runDealPrequalifier,
+  callbackInputSchema,
+  callbackToolMetadata,
+  runRequestCallback,
+  marketRatesInputSchema,
+  marketRatesToolMetadata,
+  runMarketRates,
+} from "./tools/enquiry.js";
 
 export const SERVER_INFO = {
   name: "fd-property-mortgage",
-  version: "0.4.0",
+  version: "0.5.0",
   title: "Fox Davidson UK Mortgage Calculators",
 };
 
@@ -222,6 +233,57 @@ export function buildServer(): McpServer {
     },
     async (input) => {
       const response = runContractorDayRate(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    prequalifierToolMetadata.name,
+    {
+      title: prequalifierToolMetadata.title,
+      description: prequalifierToolMetadata.description,
+      inputSchema: prequalifierInputSchema.shape,
+      annotations: { title: prequalifierToolMetadata.title, ...prequalifierToolMetadata.annotations },
+    },
+    async (input) => {
+      const response = runDealPrequalifier(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    callbackToolMetadata.name,
+    {
+      title: callbackToolMetadata.title,
+      description: callbackToolMetadata.description,
+      inputSchema: callbackInputSchema.shape,
+      annotations: { title: callbackToolMetadata.title, ...callbackToolMetadata.annotations },
+    },
+    async (input) => {
+      const response = runRequestCallback(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    marketRatesToolMetadata.name,
+    {
+      title: marketRatesToolMetadata.title,
+      description: marketRatesToolMetadata.description,
+      inputSchema: marketRatesInputSchema.shape,
+      annotations: { title: marketRatesToolMetadata.title, ...marketRatesToolMetadata.annotations },
+    },
+    async (input) => {
+      const response = runMarketRates(input as any);
       return {
         content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
         structuredContent: response as unknown as { [x: string]: unknown },

@@ -55,6 +55,18 @@ import {
   contractorToolMetadata,
   runContractorDayRate,
 } from "./tools/criteria.js";
+import {
+  prequalifierInputSchema,
+  prequalifierToolMetadata,
+  runDealPrequalifier,
+  callbackInputSchema,
+  callbackToolMetadata,
+  runRequestCallback,
+  marketRatesInputSchema,
+  marketRatesToolMetadata,
+  runMarketRates,
+} from "./tools/enquiry.js";
+import { MARKET_RATES } from "./data/market-rates.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Tool registry — same handlers as the stdio server, registered by name
@@ -116,6 +128,21 @@ const tools: ToolEntry[] = [
     metadata: contractorToolMetadata,
     schema: contractorInputSchema,
     handler: (input) => runContractorDayRate(contractorInputSchema.parse(input)),
+  },
+  {
+    metadata: prequalifierToolMetadata,
+    schema: prequalifierInputSchema,
+    handler: (input) => runDealPrequalifier(prequalifierInputSchema.parse(input)),
+  },
+  {
+    metadata: callbackToolMetadata,
+    schema: callbackInputSchema,
+    handler: (input) => runRequestCallback(callbackInputSchema.parse(input)),
+  },
+  {
+    metadata: marketRatesToolMetadata,
+    schema: marketRatesInputSchema,
+    handler: (input) => runMarketRates(marketRatesInputSchema.parse(input)),
   },
 ];
 
@@ -214,7 +241,7 @@ const PROTOCOL_VERSION = "2025-06-18";
 const SERVER_INFO = {
   name: "fd-property-mortgage",
   title: "Fox Davidson UK Mortgage Calculators",
-  version: "0.4.0",
+  version: "0.5.0",
 };
 
 function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
@@ -232,7 +259,7 @@ function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
             capabilities: { tools: {} },
             serverInfo: SERVER_INFO,
             instructions:
-              "Nine UK mortgage and property finance tools from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
+              "Twelve UK mortgage and property finance tools from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214). " +
               "Calculators: UK stamp duty (SDLT/LBTT/LTT), FCA high net worth mortgage qualification, bridging loan cost with a high net worth term check, " +
               "bridging cost analyser (rolled, retained, serviced interest), development finance appraisal and buy-to-let ICR stress test. " +
               "Lender data: a criteria lookup across 40+ named UK lenders (contractor income, retained profit, one year accounts, bonus, foreign currency, " +
@@ -337,11 +364,52 @@ function jsonResponse(body: unknown, init?: ResponseInit): Response {
 }
 
 export interface Env {
-  // Reserved for future bindings (KV, Durable Objects, secrets).
+  USAGE?: KVNamespace;
+  STATS_KEY?: string;
+}
+
+// Usage counting: one KV record per day, counts per tool and per client
+// bucket. No personal data, no arguments, no IP addresses are stored.
+function clientBucket(ua: string): string {
+  const u = ua.toLowerCase();
+  if (u.includes("openai") || u.includes("chatgpt")) return "openai";
+  if (u.includes("claude") || u.includes("anthropic")) return "claude";
+  if (u.includes("cursor")) return "cursor";
+  return "other";
+}
+
+async function recordUsage(env: Env, names: string[], bucket: string): Promise<void> {
+  if (!env.USAGE || names.length === 0) return;
+  const day = new Date().toISOString().slice(0, 10);
+  const key = "d:" + day;
+  const cur = ((await env.USAGE.get(key, "json")) as Record<string, Record<string, number>> | null) ?? {};
+  for (const n of names) {
+    cur[n] = cur[n] ?? {};
+    cur[n][bucket] = (cur[n][bucket] ?? 0) + 1;
+  }
+  await env.USAGE.put(key, JSON.stringify(cur), { expirationTtl: 60 * 60 * 24 * 400 });
+}
+
+function serverCard() {
+  return {
+    $schema: "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+    version: "1.0",
+    protocolVersion: "2025-06-18",
+    serverInfo: { name: "io.github.foxdavidson/property-mortgage-mcp", title: "Fox Davidson UK Mortgage Calculators", version: "0.5.0" },
+    description:
+      "UK mortgage and property finance tools from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214).",
+    iconUrl: "https://www.foxdavidson.co.uk/app/icon-512.png",
+    documentationUrl: "https://www.foxdavidson.co.uk/finance-guide/uk-property-finance-mcp-ai-assistants/",
+    transport: { type: "streamable-http", endpoint: "https://mcp.foxdavidson.co.uk/mcp" },
+    capabilities: { tools: { listChanged: false } },
+    authentication: { required: false, schemes: [] },
+    tools: tools.map((t) => ({ name: t.metadata.name, title: t.metadata.title, description: t.metadata.description })),
+    publisher: { name: "Fox Davidson Ltd", url: "https://www.foxdavidson.co.uk/", fcaFrn: "1056214" },
+  };
 }
 
 export default {
-  async fetch(request: Request, _env: Env, _ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
@@ -354,11 +422,43 @@ export default {
       });
     }
 
+    if ((url.pathname === "/.well-known/mcp/server-card.json" || url.pathname === "/.well-known/mcp.json") && request.method === "GET") {
+      return jsonResponse(serverCard(), { headers: { "Cache-Control": "public, max-age=3600" } });
+    }
+
+    if (url.pathname === "/rates.json" && request.method === "GET") {
+      return jsonResponse({ ...MARKET_RATES, publisher: "Fox Davidson Ltd, FCA FRN 1056214" }, { headers: { "Cache-Control": "public, max-age=3600" } });
+    }
+
+    if (url.pathname === "/stats" && request.method === "GET") {
+      if (!env.USAGE) return jsonResponse({ error: "usage store not configured" }, { status: 503 });
+      if (env.STATS_KEY && url.searchParams.get("key") !== env.STATS_KEY) {
+        return jsonResponse({ error: "forbidden" }, { status: 403 });
+      }
+      const days = Math.min(Math.max(Number(url.searchParams.get("days") ?? "7"), 1), 90);
+      const out: Record<string, unknown> = {};
+      const totals: Record<string, number> = {};
+      const byClient: Record<string, number> = {};
+      for (let i = 0; i < days; i++) {
+        const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+        const rec = (await env.USAGE.get("d:" + d, "json")) as Record<string, Record<string, number>> | null;
+        if (!rec) continue;
+        out[d] = rec;
+        for (const [tool, b] of Object.entries(rec)) {
+          for (const [client, n] of Object.entries(b)) {
+            totals[tool] = (totals[tool] ?? 0) + n;
+            byClient[client] = (byClient[client] ?? 0) + n;
+          }
+        }
+      }
+      return jsonResponse({ days, totals, by_client: byClient, daily: out });
+    }
+
     if (url.pathname === "/health" && request.method === "GET") {
       return jsonResponse({
         ok: true,
         service: "fd-property-mortgage-mcp",
-        version: "0.4.0",
+        version: "0.5.0",
         tools: tools.map((t) => t.metadata.name),
         brand: "Fox Davidson",
         brand_url: "https://www.foxdavidson.co.uk",
@@ -376,7 +476,7 @@ export default {
       }
       return jsonResponse({
         service: "fd-property-mortgage-mcp",
-        version: "0.4.0",
+        version: "0.5.0",
         endpoint: "POST /mcp (JSON-RPC 2.0 over HTTP, Streamable HTTP transport)",
         tools: tools.map((t) => t.metadata.name),
         docs: "https://www.foxdavidson.co.uk/calculators/",
@@ -403,6 +503,16 @@ export default {
           { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } },
           { status: 400 }
         );
+      }
+
+      {
+        const reqs = (Array.isArray(body) ? body : [body]) as JsonRpcRequest[];
+        const called = reqs
+          .filter((r) => r && r.method === "tools/call")
+          .map((r) => String((r.params as { name?: string } | undefined)?.name ?? "unknown"));
+        if (called.length) {
+          ctx.waitUntil(recordUsage(env, called, clientBucket(request.headers.get("user-agent") ?? "")).catch(() => {}));
+        }
       }
 
       if (Array.isArray(body)) {
@@ -462,7 +572,7 @@ function landingHtml(): string {
 <main class="wrap">
   <div class="tag">Model Context Protocol Server</div>
   <h1>Fox Davidson UK Mortgage MCP</h1>
-  <p class="lead">Nine UK mortgage and property finance tools for MCP-compatible AI assistants (ChatGPT, Claude, Cursor and custom agents): six calculators and three lender criteria tools covering 40+ named UK lenders.</p>
+  <p class="lead">Twelve UK mortgage and property finance tools for MCP-compatible AI assistants (ChatGPT, Claude, Cursor and custom agents): six calculators and three lender criteria tools covering 40+ named UK lenders.</p>
 
   <h2>Hosted endpoint</h2>
   <pre><code>https://mcp.foxdavidson.co.uk/mcp</code></pre>
