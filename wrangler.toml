@@ -19,6 +19,10 @@ workers_dev = true
 pattern = "mcp.foxdavidson.co.uk"
 custom_domain = true
 
+[[kv_namespaces]]
+binding = "USAGE"
+id = "ec5a667194494b9bb17fc0d25cb9d296"
+
 [observability]
 enabled = true
 
