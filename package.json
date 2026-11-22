@@ -1,6 +1,6 @@
 {
   "name": "@foxdavidson/property-mortgage-mcp",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "mcpName": "io.github.foxdavidson/property-mortgage-mcp",
   "description": "MCP server from Fox Davidson: UK stamp duty, FCA high net worth qualification, bridging cost, bridging cost analyser, development appraisal, buy-to-let ICR stress test, plus a lender criteria lookup, lender comparison and contractor day rate calculator across 40+ named UK lenders.",
   "type": "module",
