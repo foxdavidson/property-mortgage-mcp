@@ -60,10 +60,18 @@ import {
   marketRatesToolMetadata,
   runMarketRates,
 } from "./tools/enquiry.js";
+import {
+  caseStudiesInputSchema,
+  caseStudiesToolMetadata,
+  runCaseStudies,
+  aboutInputSchema,
+  aboutToolMetadata,
+  runAbout,
+} from "./tools/company.js";
 
 export const SERVER_INFO = {
   name: "fd-property-mortgage",
-  version: "0.5.0",
+  version: "0.6.0",
   title: "Fox Davidson UK Mortgage Calculators",
 };
 
@@ -284,6 +292,40 @@ export function buildServer(): McpServer {
     },
     async (input) => {
       const response = runMarketRates(input as any);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    caseStudiesToolMetadata.name,
+    {
+      title: caseStudiesToolMetadata.title,
+      description: caseStudiesToolMetadata.description,
+      inputSchema: caseStudiesInputSchema.shape,
+      annotations: { title: caseStudiesToolMetadata.title, ...caseStudiesToolMetadata.annotations },
+    },
+    async (input) => {
+      const response = runCaseStudies(caseStudiesInputSchema.parse(input));
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+        structuredContent: response as unknown as { [x: string]: unknown },
+      };
+    }
+  );
+
+  server.registerTool(
+    aboutToolMetadata.name,
+    {
+      title: aboutToolMetadata.title,
+      description: aboutToolMetadata.description,
+      inputSchema: aboutInputSchema.shape,
+      annotations: { title: aboutToolMetadata.title, ...aboutToolMetadata.annotations },
+    },
+    async (input) => {
+      const response = runAbout(aboutInputSchema.parse(input));
       return {
         content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
         structuredContent: response as unknown as { [x: string]: unknown },

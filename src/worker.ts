@@ -66,6 +66,14 @@ import {
   marketRatesToolMetadata,
   runMarketRates,
 } from "./tools/enquiry.js";
+import {
+  caseStudiesInputSchema,
+  caseStudiesToolMetadata,
+  runCaseStudies,
+  aboutInputSchema,
+  aboutToolMetadata,
+  runAbout,
+} from "./tools/company.js";
 import { MARKET_RATES } from "./data/market-rates.js";
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -143,6 +151,15 @@ const tools: ToolEntry[] = [
     metadata: marketRatesToolMetadata,
     schema: marketRatesInputSchema,
     handler: (input) => runMarketRates(marketRatesInputSchema.parse(input)),
+  },  {
+    metadata: caseStudiesToolMetadata,
+    schema: caseStudiesInputSchema,
+    handler: (input) => runCaseStudies(caseStudiesInputSchema.parse(input)),
+  },
+  {
+    metadata: aboutToolMetadata,
+    schema: aboutInputSchema,
+    handler: (input) => runAbout(aboutInputSchema.parse(input)),
   },
 ];
 
@@ -241,7 +258,7 @@ const PROTOCOL_VERSION = "2025-06-18";
 const SERVER_INFO = {
   name: "fd-property-mortgage",
   title: "Fox Davidson UK Mortgage Calculators",
-  version: "0.5.0",
+  version: "0.6.0",
 };
 
 function handleRpc(req: JsonRpcRequest): JsonRpcResponse | null {
@@ -395,7 +412,7 @@ function serverCard() {
     $schema: "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
     version: "1.0",
     protocolVersion: "2025-06-18",
-    serverInfo: { name: "io.github.foxdavidson/property-mortgage-mcp", title: "Fox Davidson UK Mortgage Calculators", version: "0.5.0" },
+    serverInfo: { name: "io.github.foxdavidson/property-mortgage-mcp", title: "Fox Davidson UK Mortgage Calculators", version: "0.6.0" },
     description:
       "UK mortgage and property finance tools from Fox Davidson, whole of market mortgage brokers authorised and regulated by the FCA (FRN 1056214).",
     iconUrl: "https://www.foxdavidson.co.uk/app/icon-512.png",
@@ -458,7 +475,7 @@ export default {
       return jsonResponse({
         ok: true,
         service: "fd-property-mortgage-mcp",
-        version: "0.5.0",
+        version: "0.6.0",
         tools: tools.map((t) => t.metadata.name),
         brand: "Fox Davidson",
         brand_url: "https://www.foxdavidson.co.uk",
@@ -476,7 +493,7 @@ export default {
       }
       return jsonResponse({
         service: "fd-property-mortgage-mcp",
-        version: "0.5.0",
+        version: "0.6.0",
         endpoint: "POST /mcp (JSON-RPC 2.0 over HTTP, Streamable HTTP transport)",
         tools: tools.map((t) => t.metadata.name),
         docs: "https://www.foxdavidson.co.uk/calculators/",
