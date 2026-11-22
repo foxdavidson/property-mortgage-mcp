@@ -20,6 +20,72 @@ export const CASE_STUDIES_REVIEWED = "2026-11-22";
 
 export const CASE_STUDIES: CaseStudy[] = [
  {
+  "title": "£554k PBSA Development Finance: Office to 18 Student Rooms in Farnham",
+  "url": "https://www.foxdavidson.co.uk/case-studies/pbsa-development-finance-student-accommodation-farnham/",
+  "date": "2026-09-30",
+  "location": "Farnham, Surrey",
+  "loan": "£553,652",
+  "loan_gbp": 553652,
+  "ltv": "28% of GDV",
+  "product": "Student Accommodation (PBSA) Development Finance",
+  "sector": "development"
+ },
+ {
+  "title": "Regulated Bridge for Main Residence Refurbishment in Brockley, London",
+  "url": "https://www.foxdavidson.co.uk/case-studies/regulated-bridge-main-residence-refurbishment-brockley/",
+  "date": "2026-10-14",
+  "location": "Brockley, London",
+  "loan": "£1,400,000",
+  "loan_gbp": 1400000,
+  "ltv": "59%",
+  "product": "Regulated Bridging Loan (Light Refurbishment)",
+  "sector": "bridging"
+ },
+ {
+  "title": "Care Home Share Purchase Mortgage in Newport, Isle of Wight",
+  "url": "https://www.foxdavidson.co.uk/case-studies/care-home-share-purchase-mortgage-isle-of-wight/",
+  "date": "2026-10-28",
+  "location": "Newport, Isle of Wight",
+  "loan": "£894,000",
+  "loan_gbp": 894000,
+  "ltv": "65%",
+  "product": "Care Home Commercial Mortgage (Share Purchase)",
+  "sector": "commercial"
+ },
+ {
+  "title": "Regulated Bridge for a Main Residence Purchase in Midsomer Norton, Somerset",
+  "url": "https://www.foxdavidson.co.uk/case-studies/regulated-bridge-main-residence-midsomer-norton/",
+  "date": "2026-11-12",
+  "location": "Midsomer Norton, Somerset",
+  "loan": "£676,083",
+  "loan_gbp": 676083,
+  "ltv": "75% gross",
+  "product": "Regulated Bridging Loan",
+  "sector": "bridging"
+ },
+ {
+  "title": "Regulated Bridge for Main Residence Refurbishment in Reading",
+  "url": "https://www.foxdavidson.co.uk/case-studies/regulated-bridge-main-residence-refurbishment-reading/",
+  "date": "2026-05-20",
+  "location": "Caversham, Reading",
+  "loan": "£800,000",
+  "loan_gbp": 800000,
+  "ltv": "52% gross",
+  "product": "Regulated Bridging Loan (Light Refurbishment)",
+  "sector": "bridging"
+ },
+ {
+  "title": "HNW Regulated Bridge Over 18 Months in East Sheen and Fulham, London",
+  "url": "https://www.foxdavidson.co.uk/case-studies/hnw-regulated-bridge-18-months-east-sheen-fulham/",
+  "date": "2026-07-16",
+  "location": "East Sheen and Fulham, London",
+  "loan": "£1,214,000",
+  "loan_gbp": 1214000,
+  "ltv": "35% gross",
+  "product": "HNW Regulated Bridging Loan (18 months)",
+  "sector": "bridging"
+ },
+ {
   "title": "Semi-Commercial Mortgage for a Bristol Restaurant Business",
   "url": "https://www.foxdavidson.co.uk/case-studies/semi-commercial-mortgage-bristol-restaurant/",
   "date": "2026-11-19",
