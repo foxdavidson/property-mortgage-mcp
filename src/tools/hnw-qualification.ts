@@ -102,8 +102,8 @@ export const hnwInputSchema = z.object({
     .optional()
     .describe(
       "Optional. If provided, the tool runs the joint application test which returns each " +
-        "applicant individually plus a joint household aggregate. Most lenders apply the MCOB " +
-        "3A test per individual customer."
+        "applicant individually plus a joint household aggregate. On a joint application only one " +
+        "borrower needs to meet the FCA high net worth definition."
     ),
 });
 
