@@ -2,6 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@foxdavidson/property-mortgage-mcp)](https://www.npmjs.com/package/@foxdavidson/property-mortgage-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![foxdavidson/property-mortgage-mcp MCP server](https://glama.ai/mcp/servers/foxdavidson/property-mortgage-mcp/badges/score.svg)](https://glama.ai/mcp/servers/foxdavidson/property-mortgage-mcp)
 
 UK mortgage calculators and lender criteria data exposed as a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so AI assistants such as ChatGPT, Claude, Cursor, Continue and any MCP-compatible client can run the same calculations Fox Davidson uses with clients.
 
